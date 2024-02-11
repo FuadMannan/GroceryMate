@@ -22,12 +22,17 @@ class Prices(models.Model):
 class NutritionalInfo(models.Model):
     NutritionID = models.BigAutoField(primary_key=True, verbose_name='Nutrition ID')
     ProductID = models.ForeignKey(Products, on_delete=models.CASCADE)
-    Calories = models.PositiveSmallIntegerField()
-    Protein = models.PositiveSmallIntegerField()
-    Fat = models.PositiveSmallIntegerField()
-    Carbohydrates = models.PositiveSmallIntegerField()
-    Vitamins = models.CharField(max_length=255)
-    Minerals = models.CharField(max_length=255)
+    Calories = models.DecimalField(max_digits=7, decimal_places=2)
+    ServingSize = models.DecimalField(max_digits=7, decimal_places=2)
+    FatTotal = models.DecimalField(max_digits=7, decimal_places=2)
+    FatSaturated = models.DecimalField(max_digits=7, decimal_places=2)
+    Protein = models.DecimalField(max_digits=7, decimal_places=2)
+    Sodium = models.PositiveSmallIntegerField()
+    Potassium = models.PositiveSmallIntegerField()
+    Cholesterol = models.PositiveSmallIntegerField()
+    Carbohydrates = models.DecimalField(max_digits=7, decimal_places=2)
+    Fiber = models.DecimalField(max_digits=7, decimal_places=2)
+    Sugar = models.DecimalField(max_digits=7, decimal_places=2)
 
 class GroceryLists(models.Model):
     ListID = models.BigAutoField(primary_key=True, verbose_name='List ID')
