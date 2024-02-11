@@ -1,21 +1,79 @@
 {% extends 'base.html' %}
 {% block title %}Grocery Mate{% endblock %}
 {% block content %}
-<h2>Sign up</h2>
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-    <p>
-        {{ field.label_tag }}<br>
-        {{ field }}
-        {% if field.help_text %}
-        <small style="color: grey">{{ field.help_text }}</small>
-        {% endif %}
-        {% for error in field.errors %}
-    <p style="color: red">{{ error }}</p>
-    {% endfor %}
-    </p>
-    {% endfor %}
-    <button type="submit">Sign up</button>
-</form>
+<style>
+    .form-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-field {
+        margin-bottom: 20px;
+    }
+
+    .form-field label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-field input[type="text"],
+    .form-field input[type="email"],
+    .form-field input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .form-field small {
+        color: grey;
+    }
+
+    .form-field .error-message {
+        color: red;
+        margin-top: 5px;
+    }
+
+    .form-button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .form-button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Sign up</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+            <small>{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <p class="error-message">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="form-button">Sign up</button>
+    </form>
+</div>
 {% endblock %}
