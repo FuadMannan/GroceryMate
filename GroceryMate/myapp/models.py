@@ -10,6 +10,7 @@ class Products(models.Model):
 
 class Stores(models.Model):
     StoreID = models.BigAutoField(primary_key=True, verbose_name='Store ID')
+    ChainName = models.CharField(max_length=255)
     StoreName = models.CharField(max_length=255)
     Location = models.CharField(max_length=255, unique=True)
 
