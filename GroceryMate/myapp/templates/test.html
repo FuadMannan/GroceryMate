@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootstrap List with Rename and Delete</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <h2>List with Rename and Delete</h2>
+  <ul id="itemList" class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span class="item-name">Item 1</span>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-primary rename-btn"><i class="fas fa-edit"></i></button>
+        <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span class="item-name">Item 2</span>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-primary rename-btn"><i class="fas fa-edit"></i></button>
+        <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span class="item-name">Item 3</span>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-primary rename-btn"><i class="fas fa-edit"></i></button>
+        <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+<!-- Font Awesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const itemList = document.getElementById('itemList');
+
+    // Function to handle item renaming
+    function renameItem(item) {
+      const newName = prompt('Enter new name:');
+      if (newName) {
+        const itemName = item.querySelector('.item-name');
+        itemName.textContent = newName;
+      }
+    }
+
+    // Function to handle item deletion
+    function deleteItem(item) {
+      if (confirm('Are you sure you want to delete this item?')) {
+        itemList.removeChild(item);
+      }
+    }
+
+    // Add event listeners to all rename buttons
+    document.querySelectorAll('.rename-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const listItem = this.closest('.list-group-item');
+        renameItem(listItem);
+      });
+    });
+
+    // Add event listeners to all delete buttons
+    document.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const listItem = this.closest('.list-group-item');
+        deleteItem(listItem);
+      });
+    });
+  });
+</script>
+</body>
+</html>

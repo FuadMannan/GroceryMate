@@ -6,6 +6,7 @@ from .models import Prices
 
 from myapp.forms import SignUpForm
 
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -20,6 +21,7 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
+<<<<<<< Updated upstream
 @csrf_exempt
 def scrape(request):
     if request.method == 'GET':
@@ -43,3 +45,8 @@ def get_locations(request):
             'price_items' : Prices.objects.all(),
         }
         return render(request, 'scrape.html', items)
+=======
+
+def grocery_lists(request):
+    return render(request, './grocery_lists.html')
+>>>>>>> Stashed changes
