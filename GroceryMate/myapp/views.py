@@ -21,32 +21,32 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
-<<<<<<< Updated upstream
+
 @csrf_exempt
 def scrape(request):
     if request.method == 'GET':
         items = {
-                'stores' : scrape_api.STORES,
-                'store_items' : Stores.objects.all(),
-                'product_items' : Products.objects.all(),
-                'price_items' : Prices.objects.all(),
-            }
+            'stores': scrape_api.STORES,
+            'store_items': Stores.objects.all(),
+            'product_items': Products.objects.all(),
+            'price_items': Prices.objects.all(),
+        }
         return render(request, 'scrape.html', items)
+
 
 @csrf_exempt
 def get_locations(request):
     if request.method == 'GET':
         scrape_api.Locations.get_Walmart()
         items = {
-            'store' : request.GET.get('chain'),
-            'stores' : scrape_api.STORES,
-            'store_items' : Stores.objects.all(),
-            'product_items' : Products.objects.all(),
-            'price_items' : Prices.objects.all(),
+            'store': request.GET.get('chain'),
+            'stores': scrape_api.STORES,
+            'store_items': Stores.objects.all(),
+            'product_items': Products.objects.all(),
+            'price_items': Prices.objects.all(),
         }
         return render(request, 'scrape.html', items)
-=======
+
 
 def grocery_lists(request):
     return render(request, './grocery_lists.html')
->>>>>>> Stashed changes
