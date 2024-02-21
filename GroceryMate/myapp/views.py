@@ -1,10 +1,13 @@
-from django.contrib.auth import login, authenticate
-from django.shortcuts import render, redirect
-from .backend.scrape_api import scrape_api
-from django.views.decorators.csrf import csrf_exempt
-from .models import Prices
+import json
 
+from django.contrib.auth import login, authenticate
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from myapp.forms import SignUpForm
+
+from .backend.scrape_api import scrape_api
+from .models import Prices, GroceryLists
 
 
 def signup(request):
@@ -49,4 +52,19 @@ def get_locations(request):
 
 
 def grocery_lists(request):
-    return render(request, './grocery_lists.html')
+    grocery_lists = GroceryLists.objects.filter(UserID=request.user)
+
+    return render(request, './grocery_lists.html', {
+        "grocery_lists": grocery_lists,
+    })
+
+
+def save_grocery_lists(request):
+    data = json.loads(request.body.decode('UTF-8'))
+
+    GroceryLists.objects.create(
+        UserID=request.user,
+        ListName=data["name"]
+    )
+
+    return HttpResponse(json.dumps({'status': 200}), content_type="application/json")

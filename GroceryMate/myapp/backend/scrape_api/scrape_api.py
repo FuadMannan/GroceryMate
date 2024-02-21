@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup
-from seleniumbase import Driver
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.common.action_chains import ActionChains
+from seleniumbase import Driver
+
 from ...models import Stores
 
 STORES = [
@@ -9,10 +10,12 @@ STORES = [
     'Loblaws'
 ]
 
+
 def open_with_driver(url):
     driver = Driver(uc=True, headless=True)
     driver.open(url)
     return driver
+
 
 def page_soup(driver: Driver):
     page_text = driver.get_page_source()
@@ -21,7 +24,6 @@ def page_soup(driver: Driver):
 
 
 class Locations:
-
     cities = None
 
     @staticmethod
@@ -38,7 +40,7 @@ class Locations:
             element = driver.find_element('div#px-captcha')
             x = -(element.size['width'] / 2) + 50
             try:
-                actions.move_to_element(element).move_by_offset(x,0).click_and_hold().pause(7).release().perform()
+                actions.move_to_element(element).move_by_offset(x, 0).click_and_hold().pause(7).release().perform()
                 print('action performed')
                 checked = True
             except StaleElementReferenceException as e:

@@ -3,41 +3,58 @@
 {% load static %}
 
 {% block assetfiles %}
-<link rel="stylesheet" href="{% static '/css/grocery_lists.css' %}">
+<link href="{% static '/css/grocery_lists.css' %}" rel="stylesheet">
 {% endblock %}
 
 
 {% block content %}
 <div class="container mt-5">
     <h2>
-        <button id="add-new-list-btn" type="button" class="btn btn-outline-primary">Add New Grocery List</button>
+        <button class="btn btn-outline-primary" id="add-new-list-btn" type="button">Add New Grocery List</button>
     </h2>
 
+    {% if not grocery_lists %}
+    <div class="alert alert-dark" role="alert">
+        Lets get you started. Start adding your grocery lists here!
+    </div>
+    {% endif %}
+
     <div class="">
-        <ul id="grocery-lists-container" class="list-group">
+        <ul class="list-group" id="grocery-lists-container">
+            {% for item in grocery_lists %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="item-name">{{item.ListName}}</span>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary rename-btn"><i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </li>
+            {% endfor %}
         </ul>
     </div>
 </div>
 
 <!-- Modals -->
-<div id="add-list-modal" class="modal" tabindex="-1">
+<div class="modal" id="add-list-modal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add your new List</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="add-new-list-input" class="form-label">Please enter the name of the new list
+                    <label class="form-label" for="add-new-list-input">Please enter the name of the new list
                         below:</label>
-                    <input type="text" class="form-control" id="add-new-list-input"
-                           placeholder="List Name">
+                    <input class="form-control" id="add-new-list-input" placeholder="List Name"
+                           type="text">
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="add-new-list-modal-save">Save changes</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                <button class="btn btn-primary" id="add-new-list-modal-save" type="button">Save changes</button>
             </div>
         </div>
     </div>

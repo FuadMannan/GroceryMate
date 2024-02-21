@@ -2,40 +2,40 @@
 {% block title %}Grocery Mate{% endblock %}
 {% block content %}
 <div class="border m-3 p-2">
-  <h2>Stores</h2>
-  <table class="table table-striped table-bordered">
-    <thead>
-      <th>StoreID</th>
-      <th>ChainName</th>
-      <th>StoreName</th>
-      <th>Location</th>
-    </thead>
-    <tbody>
-      {% for item in store_items %}
+    <h2>Stores</h2>
+    <table class="table table-striped table-bordered">
+        <thead>
+        <th>StoreID</th>
+        <th>ChainName</th>
+        <th>StoreName</th>
+        <th>Location</th>
+        </thead>
+        <tbody>
+        {% for item in store_items %}
         <tr>
-          <td>{{ item.StoreID }}</td>
-          <td>{{ item.ChainName }}</td>
-          <td>{{ item.StoreName }}</td>
-          <td>{{ item.Location }}</td>
+            <td>{{ item.StoreID }}</td>
+            <td>{{ item.ChainName }}</td>
+            <td>{{ item.StoreName }}</td>
+            <td>{{ item.Location }}</td>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <form method="get" action="get_locations">
-    <div class="mb-3">
-      Scrape Test
+        {% endfor %}
+        </tbody>
+    </table>
+    <form action="get_locations" method="get">
+        <div class="mb-3">
+            Scrape Test
+        </div>
+        <select class="form-select my-2" id="chain" name="chain">
+            {% for store in stores %}
+            <option value="{{store}}">{{store}}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary" type="submit">Scrape</button>
+    </form>
+    <div>
+        {% if store %}
+        <span>Getting data for {{ store }}</span>
+        {% endif %}
     </div>
-    <select id="chain" name="chain" class="form-select my-2">
-      {% for store in stores %}
-        <option value="{{store}}">{{store}}</option>
-      {% endfor %}
-    </select>
-    <button type="submit" class="btn btn-primary">Scrape</button>
-  </form>
-  <div>
-    {% if store %}
-    <span>Getting data for {{ store }}</span>
-    {% endif %}
-  </div>
 </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 import json
+
 import requests
 
 BASE_URL = 'https://api.calorieninjas.com/v1'
