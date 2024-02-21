@@ -9,6 +9,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // Add event listeners to all rename buttons
+    document.querySelectorAll('.rename-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const listItem = this.closest('.list-group-item');
+            renameItem(listItem);
+        });
+    });
+
+    // Add event listeners to all delete buttons
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const listItem = this.closest('.list-group-item');
+            deleteItem(listItem);
+        });
+    });
+
     // Save new list
     document.getElementById('add-new-list-modal-save').addEventListener('click', function () {
         let listName = $("#add-new-list-input").val();
