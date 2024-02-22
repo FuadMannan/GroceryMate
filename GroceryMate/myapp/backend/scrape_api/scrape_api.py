@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
 from seleniumbase import Driver
+from abc import ABC, abstractmethod
+import threading
 
 from ...models import Chains, Stores
 
@@ -23,6 +25,49 @@ def page_soup(driver: Driver):
     return soup
 
 
+class check(threading.Thread, ABC):
+
+    def __init__(self, driver: Driver, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.driver = driver
+        self.checked = False
+        self.is_checking = False
+        self.sleeptime = 10
+
+    @abstractmethod
+    def run(self) -> None:
+        pass
+
+
+class walmart_check(check):
+
+    def __init__(self, driver: Driver) -> None:
+        super().__init__(driver)
+
+    def run(self):
+        while not self.checked and self.driver.is_element_visible('div#px-captcha'):
+            self.is_checking = True
+            print('Bot check detected')
+            actions = ActionChains(self.driver)
+            element = self.driver.find_element('div#px-captcha')
+            x = -(element.size['width'] / 2) + 50
+            try:
+                actions.move_to_element(element).move_by_offset(x,0)
+                actions.click_and_hold().pause(self.sleeptime).release().perform()
+            except (StaleElementReferenceException, Exception) as e:
+                error_message = f'Encountered an issue at {self.driver.current_url}:\n{(type(e))}: '
+                if hasattr(e, 'msg'):
+                    error_message += e.msg
+                elif hasattr(e, 'message'):
+                    error_message += e.message
+                else:
+                    error_message += 'No message provided'
+                print(error_message)
+
+        self.is_checking = False
+        self.checked = True
+
+
 class Locations:
 
     cities = None
@@ -41,21 +86,6 @@ class Locations:
                 chain.save()
 
     @staticmethod
-    def check(driver, checked):
-        if not checked and driver.is_element_visible('div#px-captcha'):
-            print('Bot check detected')
-            actions = ActionChains(driver)
-            element = driver.find_element('div#px-captcha')
-            x = -(element.size['width'] / 2) + 50
-            try:
-                actions.move_to_element(element).move_by_offset(x, 0).click_and_hold().pause(7).release().perform()
-                print('action performed')
-                checked = True
-            except StaleElementReferenceException as e:
-                if hasattr(e, 'msg'):
-                    print(e.msg)
-
-    @staticmethod
     def get_Walmart():
 
         if Locations.cities is None:
@@ -64,10 +94,10 @@ class Locations:
 
         URL = 'https://www.walmart.ca/en/stores-near-me'
 
-        checked = False
-
         try:
             driver = open_with_driver(URL)
+            bot_check = walmart_check(driver)
+            bot_check.start()
             driver.sleep(3)
 
             # Filter for locations with groceries
@@ -77,9 +107,11 @@ class Locations:
             driver.sleep(2)
             driver.refresh()
             driver.sleep(2)
-            Locations.check(driver, checked)
 
             chain = Chains.objects.get(ChainName='Walmart')
+
+            if bot_check.is_checking:
+                driver.sleep(bot_check.sleeptime + 2)
 
             # Search for locations by city
             for city in Locations.cities:
@@ -110,6 +142,7 @@ class Locations:
                         print('Unique store, saving to db..')
                         store = Stores(ChainID=chain, StoreName=name, Location=location)
                         store.save()
+            bot_check.checked = True
 
             driver.quit()
 
