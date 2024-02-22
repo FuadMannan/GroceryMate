@@ -1,10 +1,11 @@
 import json
 
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from myapp.forms import SignUpForm
+from myapp.forms import SignUpForm, LoginForm
 
 from .backend.scrape_api import scrape_api
 from .models import Prices, GroceryLists
@@ -68,3 +69,20 @@ def save_grocery_lists(request):
     )
 
     return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                # Redirect to the desired page after successful login
+                return redirect('grocery_lists')
+    else:
+        form = LoginForm()
+
+    return render(request, 'login.html', {'form': form})
