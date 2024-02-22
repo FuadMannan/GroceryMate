@@ -9,10 +9,14 @@ class Products(models.Model):
     ProductName = models.CharField(max_length=255)
     Category = models.CharField(max_length=255, null=True)
 
+class Chains(models.Model):
+    ChainID = models.SmallAutoField(primary_key=True, verbose_name='Chain ID')
+    ChainName = models.CharField(max_length=255)
+
 
 class Stores(models.Model):
     StoreID = models.BigAutoField(primary_key=True, verbose_name='Store ID')
-    ChainName = models.CharField(max_length=255)
+    ChainID = models.ForeignKey(Chains, on_delete=models.CASCADE)
     StoreName = models.CharField(max_length=255)
     Location = models.CharField(max_length=255, unique=True)
 
@@ -20,7 +24,7 @@ class Stores(models.Model):
 class Prices(models.Model):
     PriceID = models.BigAutoField(primary_key=True, verbose_name='Price ID')
     ProductID = models.ForeignKey(Products, on_delete=models.CASCADE)
-    StoreID = models.ForeignKey(Stores, on_delete=models.CASCADE)
+    ChainID = models.ForeignKey(Chains, on_delete=models.CASCADE)
     Price = models.DecimalField(max_digits=5, decimal_places=2, null=False)
 
 

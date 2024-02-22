@@ -3,7 +3,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
 from seleniumbase import Driver
 
-from ...models import Stores
+from ...models import Chains, Stores
 
 STORES = [
     'Walmart',
@@ -24,6 +24,7 @@ def page_soup(driver: Driver):
 
 
 class Locations:
+
     cities = None
 
     @staticmethod
@@ -31,6 +32,13 @@ class Locations:
         f = open('cities.txt')
         Locations.cities = f.read().split('\n')
         f.close()
+        chains = Chains.objects.all().values()
+        if len(chains) != len(STORES):
+            for store in STORES:
+                if chains.filter(ChainName=store):
+                    continue
+                chain = Chains(ChainName=store)
+                chain.save()
 
     @staticmethod
     def check(driver, checked):
@@ -71,6 +79,8 @@ class Locations:
             driver.sleep(2)
             Locations.check(driver, checked)
 
+            chain = Chains.objects.get(ChainName='Walmart')
+
             # Search for locations by city
             for city in Locations.cities:
                 print(city)
@@ -96,17 +106,20 @@ class Locations:
                     print(f"name: {name}\nlocation: {location}\n\n")
 
                     # Add store if doesn't exist in database
-                    if len(Stores.objects.filter(ChainName='Walmart', StoreName=name, Location=location)) == 0:
+                    if len(Stores.objects.filter(StoreName=name, Location=location)) == 0:
                         print('Unique store, saving to db..')
-                        store = Stores(ChainName='Walmart', StoreName=name, Location=location)
+                        store = Stores(ChainID=chain, StoreName=name, Location=location)
                         store.save()
 
             driver.quit()
 
         except Exception as e:
-            print('something went wrong')
-            driver.quit()
+            error_message = f'Encountered an issue at {driver.current_url}:\n{(type(e))}: '
             if hasattr(e, 'msg'):
-                print(e.msg)
-            if hasattr(e, 'message'):
-                print(e.message)
+                error_message += e.msg
+            elif hasattr(e, 'message'):
+                error_message += e.message
+            else:
+                error_message += 'No message provided'
+            print(error_message)
+            driver.quit()

@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from myapp.forms import SignUpForm, LoginForm
 
 from .backend.scrape_api import scrape_api
-from .models import Stores, Products, Prices, GroceryLists
+from .models import Chains, Stores, Products, Prices, GroceryLists
 
 
 def signup(request):
@@ -46,6 +46,7 @@ def get_locations(request):
             'store': request.GET.get('chain'),
             'stores': scrape_api.STORES,
             'store_items': Stores.objects.all(),
+            'chain_items': Chains.objects.all(),
             'product_items': Products.objects.all(),
             'price_items': Prices.objects.all(),
         }
