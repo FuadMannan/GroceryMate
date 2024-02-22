@@ -74,3 +74,11 @@ def delete_grocery_list(request, id):
     GroceryLists.objects.filter(ListID=id).delete()
 
     return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
+
+
+def edit_grocery_list(request, id):
+    data = json.loads(request.body.decode('UTF-8'))
+
+    GroceryLists.objects.filter(ListID=id).update(ListName=data["name"])
+
+    return HttpResponse(json.dumps({'status': 200}), content_type="application/json")

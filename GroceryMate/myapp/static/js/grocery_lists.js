@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const newName = prompt('Enter new name:');
         if (newName) {
             const itemName = item.querySelector('.item-name');
+            edit_list(item.dataset.id, newName);
             itemName.textContent = newName;
         }
     }
@@ -76,7 +77,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to handle item deletion
     function deleteItem(item) {
         if (confirm('Are you sure you want to delete this item?')) {
-            console.log(item.dataset.id)
             delete_list(item.dataset.id)
             itemList.removeChild(item);
         }
@@ -91,4 +91,10 @@ function save_list(listName) {
 
 function delete_list(listId) {
     ajax_req("POST", "/delete_grocery_list/" + listId, {})
+}
+
+function edit_list(listId, newName) {
+    ajax_req("POST", "/edit_grocery_list/" + listId, {
+        name: newName,
+    })
 }
