@@ -69,20 +69,3 @@ def save_grocery_lists(request):
     )
 
     return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
-
-
-def login_view(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                # Redirect to the desired page after successful login
-                return redirect('grocery_lists')
-    else:
-        form = LoginForm()
-
-    return render(request, 'login.html', {'form': form})

@@ -62,26 +62,39 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     });
+
+
+    // Function to handle item renaming
+    function renameItem(item) {
+        const newName = prompt('Enter new name:');
+        if (newName) {
+            const itemName = item.querySelector('.item-name');
+            edit_list(item.dataset.id, newName);
+            itemName.textContent = newName;
+        }
+    }
+
+    // Function to handle item deletion
+    function deleteItem(item) {
+        if (confirm('Are you sure you want to delete this item?')) {
+            delete_list(item.dataset.id)
+            itemList.removeChild(item);
+        }
+    }
+
 });
-
-
-// Function to handle item renaming
-function renameItem(item) {
-    const newName = prompt('Enter new name:');
-    if (newName) {
-        const itemName = item.querySelector('.item-name');
-        itemName.textContent = newName;
-    }
-}
-
-// Function to handle item deletion
-function deleteItem(item) {
-    if (confirm('Are you sure you want to delete this item?')) {
-        itemList.removeChild(item);
-    }
-}
 
 
 function save_list(listName) {
     ajax_req("POST", "/save_grocery_lists/", {name: listName})
+}
+
+function delete_list(listId) {
+    ajax_req("POST", "/delete_grocery_list/" + listId, {})
+}
+
+function edit_list(listId, newName) {
+    ajax_req("POST", "/edit_grocery_list/" + listId, {
+        name: newName,
+    })
 }

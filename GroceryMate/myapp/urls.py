@@ -10,4 +10,6 @@ urlpatterns = [
     path('scrape/get_locations', views.get_locations, name='get_locations'),
     path('grocery_lists/', views.grocery_lists),
     path('save_grocery_lists/', views.save_grocery_lists),
+    path('delete_grocery_list/<int:id>', views.delete_grocery_list),
+    path('edit_grocery_list/<int:id>', views.edit_grocery_list)
 ]
