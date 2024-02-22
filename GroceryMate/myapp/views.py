@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from myapp.forms import SignUpForm, LoginForm
 
 from .backend.scrape_api import scrape_api
-from .models import Prices, GroceryLists
+from .models import Stores, Products, Prices, GroceryLists
 
 
 def signup(request):
