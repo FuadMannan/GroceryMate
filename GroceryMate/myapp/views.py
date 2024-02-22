@@ -68,3 +68,9 @@ def save_grocery_lists(request):
     )
 
     return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
+
+
+def delete_grocery_list(request, id):
+    GroceryLists.objects.filter(ListID=id).delete()
+
+    return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
