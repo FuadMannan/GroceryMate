@@ -39,18 +39,20 @@ def scrape(request):
 
 
 @csrf_exempt
-def get_locations(request):
-    if request.method == 'GET':
+def scrape(request):
+    if request.path == '/scrape/get_locations':
         scrape_api.Locations.get_Walmart()
-        items = {
-            'store': request.GET.get('chain'),
-            'stores': scrape_api.STORES,
-            'store_items': Stores.objects.all(),
-            'chain_items': Chains.objects.all(),
-            'product_items': Products.objects.all(),
-            'price_items': Prices.objects.all(),
-        }
-        return render(request, 'scrape.html', items)
+    elif request.path == '/scrape/get_products_prices':
+        scrape_api.ProductPrices.get_Walmart()
+    items = {
+        'store': request.GET.get('chain'),
+        'stores': scrape_api.STORES,
+        'store_items': Stores.objects.all(),
+        'chain_items': Chains.objects.all(),
+        'product_items': Products.objects.all(),
+        'price_items': Prices.objects.all(),
+    }
+    return render(request, 'scrape.html', items)
 
 
 def grocery_lists(request):
