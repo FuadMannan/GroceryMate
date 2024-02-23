@@ -158,6 +158,53 @@ class Locations:
             print(error_message)
             driver.quit()
 
+    def get_Loblaws():
+
+        if Locations.cities is None:
+            print('Initializing cities')
+            Locations.init()
+
+        URL = 'https://www.loblaws.ca/store-locator'
+
+        try:
+
+            driver = open_with_driver(URL)
+
+            driver.sleep(5)
+
+            soup = page_soup(driver)
+
+            list_items = soup.select('li.location-list__item')
+
+            chain = Chains.objects.get(ChainName='Loblaws')
+
+            for item in list_items:
+
+                name = item.select_one('h2').text
+
+                location = ', '.join([element.text for element in item.select('div.location-address__line')])
+
+                print(f"{name}\n{location}\n\n")
+
+                if not Stores.objects.filter(StoreName=name, Location=location).exists():
+
+                    store = Stores(ChainID=chain, StoreName=name, Location=location)
+
+                    store.save()
+
+            driver.quit()
+
+        except Exception as e:
+            error_message = f'Encountered an issue at {driver.current_url}:\n{(type(e))}: '
+            if hasattr(e, 'msg'):
+                error_message += e.msg
+            elif hasattr(e, 'message'):
+                error_message += e.message
+            else:
+                error_message += 'No message provided'
+            print(error_message)
+        finally:
+            driver.quit()
 
 class ProductPrices():
 
@@ -244,8 +291,6 @@ class ProductPrices():
 
                     # Add new price records
                     else:
-                        # stores = Stores.objects.filter(ChainName='Walmart')
-                        # for store in stores:
                         new_price = Prices(ProductID=product, ChainID=chain, Price=price)
                         new_price.save()
 
