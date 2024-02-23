@@ -1,11 +1,10 @@
 import json
 
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from myapp.forms import SignUpForm, LoginForm
+from myapp.forms import SignUpForm
 
 from .backend.scrape_api import scrape_api
 from .models import Chains, Stores, Products, Prices, GroceryLists
@@ -74,5 +73,19 @@ def save_grocery_lists(request):
         UserID=request.user,
         ListName=data["name"]
     )
+
+    return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
+
+
+def delete_grocery_list(request, id):
+    GroceryLists.objects.filter(ListID=id).delete()
+
+    return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
+
+
+def edit_grocery_list(request, id):
+    data = json.loads(request.body.decode('UTF-8'))
+
+    GroceryLists.objects.filter(ListID=id).update(ListName=data["name"])
 
     return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
