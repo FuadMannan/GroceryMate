@@ -318,9 +318,9 @@ class ProductPrices():
         bot_check.checked = True
         driver.quit()
 
-    def get_Loblaws():
+    def get_Loblaws_brands(brand):
 
-        URL = 'https://www.loblaws.ca'
+        URL = f"https://www.{brand.lower().replace(' ', '')}.ca"
 
         def full_link(href):
             return f'{URL}{href}'
@@ -358,7 +358,7 @@ class ProductPrices():
             # Category links
             categories = [full_link(item.select_one('a').attrs['href']) for item in cat_li]
 
-            chain = Chains.objects.get(ChainName='Loblaws')
+            chain = Chains.objects.get(ChainName=brand)
 
             # Cycle through categories
             for category in categories:
