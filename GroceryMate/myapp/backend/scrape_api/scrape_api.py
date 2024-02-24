@@ -5,6 +5,7 @@ from seleniumbase import Driver
 from abc import ABC, abstractmethod
 import threading
 import decimal
+import time
 
 from ...models import Chains, Stores, Products, Prices
 
@@ -308,3 +309,123 @@ class ProductPrices():
 
         bot_check.checked = True
         driver.quit()
+
+    def get_Loblaws():
+
+        URL = 'https://www.loblaws.ca'
+
+        def full_link(href):
+            return f'{URL}{href}'
+
+        def wait_until_loaded(driver, main=False):
+            is_loaded = False
+            start = time.time()
+
+            # Wait while not loaded
+            while not is_loaded:
+                time.sleep(1)
+                soup = page_soup(driver)
+
+                # If waiting for main page to load
+                if main:
+                    is_loaded = len(soup.select('ul[data-code="root"]')) > 0
+
+                # If waiting on other pages
+                else:
+                    is_loaded = len(soup.select('h1')) > 0
+
+                # If page (probably) stopped loading
+                if time.time() - start > 10:
+                    driver.refresh()
+
+            return soup
+
+        try:
+
+            driver = open_with_driver(URL)
+
+            soup = wait_until_loaded(driver, True)
+            cat_li = soup.select('ul[data-code="xp-455-food-departments"] > li')
+
+            # Category links
+            categories = [full_link(item.select_one('a').attrs['href']) for item in cat_li]
+
+            chain = Chains.objects.get(ChainName='Loblaws')
+
+            # Cycle through categories
+            for category in categories:
+                driver.open(category)
+
+                # Wait until page is loaded
+                soup = wait_until_loaded(driver)
+
+                # Get subcategories for category
+                subcategories = [full_link(link.attrs['href']) for link in
+                                 soup.select('a[data-testid="header-link"]')]
+
+                # Cycle through subcategories
+                for subcategory in subcategories:
+                    driver.open(subcategory)
+
+                    # Wait until page is loaded
+                    soup = wait_until_loaded(driver)
+                    items = soup.select('div.chakra-linkbox')
+
+                    # Cycle through items on page
+                    for item in items:
+                        # Get product name
+                        name = item.select_one(
+                            'h3[data-testid="product-title"]'
+                            ).text.replace('  ', ' ').strip()
+
+                        # Get product price
+                        price = item.select_one(
+                            'p[data-testid="price"]'
+                            ).text.replace('about', '').replace('sale', '').strip()[1:]
+                        price = decimal.Decimal(price)
+
+                        # Save new product
+                        if not Products.objects.filter(ProductName=name).exists():
+                            product = Products(ProductName=name)
+                            product.save()
+                            print('New product saved')
+
+                        # Get existing product
+                        else:
+                            product = Products.objects.get(ProductName=name)
+                            print('Existing product')
+
+                        criteria = {'ProductID': product, 'ChainID': chain}
+
+                        # Save new price
+                        if not Prices.objects.filter(**criteria).exists():
+                            new_price = Prices(Price=price, **criteria)
+                            new_price.save()
+                            print('New price saved\n')
+
+                        # Update existing price
+                        elif Prices.objects.get(**criteria).Price != price:
+                            current_price = Prices.objects.get(**criteria)
+                            criteria['PriceID'] = current_price.pk
+                            price_update = {'Price': price}
+                            Prices.objects.filter(**criteria).update(**price_update)
+                            print('Price updated\n')
+
+                        # Same price, continue loop
+                        else:
+                            print('Same price\n')
+
+            driver.quit()
+
+        except Exception as e:
+            error_message = f'Encountered an issue at {driver.current_url}:\n{(type(e))}: '
+            if hasattr(e, 'msg'):
+                error_message += e.msg
+            elif hasattr(e, 'message'):
+                error_message += e.message
+            else:
+                error_message += str(e)
+            print(error_message)
+
+        finally:
+            driver.quit()

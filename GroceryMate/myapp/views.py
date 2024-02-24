@@ -46,7 +46,10 @@ def scrape(request):
         elif store == 'Loblaws':
             scrape_api.Locations.get_Loblaws()
     elif request.path == '/scrape/get_products_prices':
-        scrape_api.ProductPrices.get_Walmart()
+        if store == 'Walmart':
+            scrape_api.ProductPrices.get_Walmart()
+        elif store == 'Loblaws':
+            scrape_api.ProductPrices.get_Loblaws()
     items = {
         'store': request.GET.get('chain'),
         'stores': scrape_api.STORES,
