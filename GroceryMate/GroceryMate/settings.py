@@ -29,7 +29,7 @@ ALLOWED_HOSTS = [
     "ec2-15-223-77-227.ca-central-1.compute.amazonaws.com"
 ]
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/grocery_lists/'
 
 # Application definition
 
