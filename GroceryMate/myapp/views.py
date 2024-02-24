@@ -43,8 +43,8 @@ def scrape(request):
     if request.path == '/scrape/get_locations':
         if store == 'Walmart':
             scrape_api.Locations.get_Walmart()
-        elif store == 'Loblaws':
-            scrape_api.Locations.get_Loblaws()
+        elif store in ('Loblaws', 'No Frills'):
+            scrape_api.Locations.get_Loblaws_brands(store)
     elif request.path == '/scrape/get_products_prices':
         if store == 'Walmart':
             scrape_api.ProductPrices.get_Walmart()

@@ -8,10 +8,12 @@ import decimal
 import time
 
 from ...models import Chains, Stores, Products, Prices
+from django.db.utils import IntegrityError
 
 STORES = [
     'Walmart',
-    'Loblaws'
+    'Loblaws',
+    'No Frills',
 ]
 
 
@@ -159,25 +161,27 @@ class Locations:
             print(error_message)
             driver.quit()
 
-    def get_Loblaws():
+    def get_Loblaws_brands(brand):
 
         if Locations.cities is None:
             print('Initializing cities')
             Locations.init()
 
-        URL = 'https://www.loblaws.ca/store-locator'
+        URL = f"https://www.{brand.lower().replace(' ', '')}.ca/store-locator"
 
         try:
 
             driver = open_with_driver(URL)
 
-            driver.sleep(5)
+            loaded = False
+            while not loaded:
+                time.sleep(1)
+                soup = page_soup(driver)
+                list_items = soup.select('li.location-list__item')
+                if len(list_items) > 0:
+                    loaded = True
 
-            soup = page_soup(driver)
-
-            list_items = soup.select('li.location-list__item')
-
-            chain = Chains.objects.get(ChainName='Loblaws')
+            chain = Chains.objects.get(ChainName=brand)
 
             for item in list_items:
 
@@ -187,11 +191,15 @@ class Locations:
 
                 print(f"{name}\n{location}\n\n")
 
-                if not Stores.objects.filter(StoreName=name, Location=location).exists():
+                try:
 
-                    store = Stores(ChainID=chain, StoreName=name, Location=location)
+                    if not Stores.objects.filter(StoreName=name, Location=location).exists():
 
-                    store.save()
+                        store = Stores(ChainID=chain, StoreName=name, Location=location)
+                        store.save()
+
+                except IntegrityError as e:
+                    print(f'{e.__cause__}. Skipping last store.\n\n')
 
             driver.quit()
 
