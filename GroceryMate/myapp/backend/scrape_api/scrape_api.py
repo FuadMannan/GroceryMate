@@ -343,7 +343,8 @@ class ProductPrices():
                     is_loaded = len(soup.select('h1')) > 0
 
                 # If page (probably) stopped loading
-                if time.time() - start > 10:
+                if time.time() - start > 15:
+                    start = time.time()
                     driver.refresh()
 
             return soup
