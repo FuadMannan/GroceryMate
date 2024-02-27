@@ -31,3 +31,8 @@
     --bs-btn-disabled-bg: #8FBC8F;
     --bs-btn-disabled-border-color: #8FBC8F
 }
+
+.grocery-list-item-link{
+    text-decoration: none;
+    color: black;
+}

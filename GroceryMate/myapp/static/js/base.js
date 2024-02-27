@@ -30,14 +30,22 @@ $.ajaxSetup({
 });
 
 function ajax_req(type, url, data) {
+    var result = ""
+
     $.ajax({
         contentType: 'application/json',
         url: url,
         type: type,
         dataType: 'json',
+        async: false,
         headers: {
             "X-CSRFToken": csrftoken
         },
-        data: JSON.stringify(data)
+        data: JSON.stringify(data),
+        success: function (response) {
+            result = response;
+        },
     });
+
+    return result;
 }

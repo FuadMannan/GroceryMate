@@ -29,10 +29,12 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('add-new-list-modal-save').addEventListener('click', function () {
         let listName = $("#add-new-list-input").val();
 
-        save_list(listName);
+        response = save_list(listName);
 
-        const elements = `<li class="list-group-item d-flex justify-content-between align-items-center">
-            <span class="item-name">${listName}</span>
+        const elements = `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${response.id}">
+            <a href="/grocery_items/${response.id}" class="grocery-list-item-link">
+                <span class="item-name">${listName}</span>
+            </a>
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-primary rename-btn"><i class="fas fa-edit"></i>
                 </button>
@@ -86,15 +88,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function save_list(listName) {
-    ajax_req("POST", "/save_grocery_lists/", {name: listName})
+    return ajax_req("POST", "/save_grocery_lists/", {name: listName});
 }
 
 function delete_list(listId) {
-    ajax_req("POST", "/delete_grocery_list/" + listId, {})
+    ajax_req("POST", "/delete_grocery_list/" + listId, {});
 }
 
 function edit_list(listId, newName) {
     ajax_req("POST", "/edit_grocery_list/" + listId, {
         name: newName,
-    })
+    });
 }
