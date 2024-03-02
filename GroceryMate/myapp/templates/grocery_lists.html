@@ -22,15 +22,17 @@
     <div class="">
         <ul class="list-group" id="grocery-lists-container">
             {% for item in grocery_lists %}
-            <li class="list-group-item d-flex justify-content-between align-items-center" data-id={{item.ListID}}>
-                <span class="item-name">{{item.ListName}}</span>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary rename-btn"><i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-            </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center" data-id={{item.ListID}}>
+                    <a href="/grocery_items/{{item.ListID}}" class="grocery-list-item-link">
+                        <span class="item-name">{{item.ListName}}</span>
+                    </a>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary rename-btn"><i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </li>
             {% endfor %}
         </ul>
     </div>

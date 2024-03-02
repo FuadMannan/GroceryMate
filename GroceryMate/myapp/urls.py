@@ -12,5 +12,6 @@ urlpatterns = [
     path('grocery_lists/', views.grocery_lists),
     path('save_grocery_lists/', views.save_grocery_lists),
     path('delete_grocery_list/<int:id>', views.delete_grocery_list),
-    path('edit_grocery_list/<int:id>', views.edit_grocery_list)
+    path('edit_grocery_list/<int:id>', views.edit_grocery_list),
+    path('grocery_items/<int:id>', views.grocery_items),
 ]

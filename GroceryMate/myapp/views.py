@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from myapp.forms import SignUpForm
 
 from .backend.scrape_api import scrape_api
-from .models import Chains, Stores, Products, Prices, GroceryLists
+from .models import Chains, Stores, Products, Prices, GroceryLists, ListItems
 
 
 def signup(request):
@@ -72,12 +72,12 @@ def grocery_lists(request):
 def save_grocery_lists(request):
     data = json.loads(request.body.decode('UTF-8'))
 
-    GroceryLists.objects.create(
+    grocery_list = GroceryLists.objects.create(
         UserID=request.user,
         ListName=data["name"]
     )
 
-    return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
+    return HttpResponse(json.dumps({'status': 200, 'id': grocery_list.ListID}), content_type="application/json")
 
 
 def delete_grocery_list(request, id):
@@ -92,3 +92,11 @@ def edit_grocery_list(request, id):
     GroceryLists.objects.filter(ListID=id).update(ListName=data["name"])
 
     return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
+
+
+def grocery_items(request, id):
+    items = ListItems.objects.filter(ListID=id)
+
+    return render(request, './grocery_items.html', {
+        "items": items,
+    })
