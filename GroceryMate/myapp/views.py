@@ -4,6 +4,7 @@ from django.contrib.auth import login, authenticate
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
 from myapp.forms import SignUpForm
 
 from .backend.scrape_api import scrape_api
@@ -96,7 +97,45 @@ def edit_grocery_list(request, id):
 
 def grocery_items(request, id):
     items = ListItems.objects.filter(ListID=id)
+    name = GroceryLists.objects.get(ListID=id).ListName
 
     return render(request, './grocery_items.html', {
-        "items": items,
+        "grocery_list_items": items,
+        "grocery_list_name": name
     })
+
+def find_products(request):
+    data = json.loads(request.body.decode('UTF-8'))
+
+    results = {}
+    
+    prices = Prices.objects.filter(ProductID__ProductName__icontains=data['name'])
+
+    for i, price in enumerate(prices):
+        item = {}
+        item['ProductName'] = price.ProductID.ProductName
+        item['ChainName'] = price.ChainID.ChainName
+        item['Price'] = str(price.Price)
+        item['PriceID'] = price.pk
+        results[f'{i}'] = item
+
+    return HttpResponse(json.dumps({'status': 200, 'items': results}), content_type="application/json")
+
+def add_grocery_list_item(request):
+    data = json.loads(request.body.decode('UTF-8'))
+
+    grocery_list = GroceryLists.objects.get(ListID=data['listID'])
+    price = Prices.objects.get(PriceID=data['priceID'])
+
+    listItem = ListItems.objects.create(
+        ListID=grocery_list, 
+        PriceID=price
+    )
+    listItem.save()
+
+    return HttpResponse(json.dumps({'status': 200, 'id': listItem.ItemID}), content_type="application/json")
+
+def delete_grocery_list_item(request, id):
+    ListItems.objects.filter(ItemID=id).delete()
+
+    return HttpResponse(json.dumps({'status': 200}), content_type="application/json")

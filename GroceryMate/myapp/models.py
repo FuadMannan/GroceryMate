@@ -54,9 +54,7 @@ class GroceryLists(models.Model):
 class ListItems(models.Model):
     ItemID = models.BigAutoField(primary_key=True, verbose_name='List Item ID')
     ListID = models.ForeignKey(GroceryLists, on_delete=models.CASCADE)
-    ProductID = models.ForeignKey(Products, on_delete=models.CASCADE)
     PriceID = models.ForeignKey(Prices, on_delete=models.CASCADE)
-    StoreID = models.ForeignKey(Stores, on_delete=models.CASCADE)
     Quantity = models.SmallIntegerField(null=True)
     Unit = models.CharField(max_length=10, null=True)
     IsChecked = models.BooleanField(default=False)
