@@ -89,6 +89,7 @@ class Locations:
                 chain = Chains(ChainName=store)
                 chain.save()
 
+
     @staticmethod
     def get_Walmart():
 
@@ -161,6 +162,8 @@ class Locations:
             print(error_message)
             driver.quit()
 
+
+    @staticmethod
     def get_Loblaws_brands(brand):
 
         if Locations.cities is None:
@@ -217,6 +220,8 @@ class Locations:
 
 class ProductPrices():
 
+
+    @staticmethod
     def get_Walmart():
 
         URL = 'https://www.walmart.ca/en/cp/grocery/10019'
@@ -318,6 +323,8 @@ class ProductPrices():
         bot_check.checked = True
         driver.quit()
 
+
+    @staticmethod
     def get_Loblaws_brands(brand):
 
         URL = f"https://www.{brand.lower().replace(' ', '')}.ca"
