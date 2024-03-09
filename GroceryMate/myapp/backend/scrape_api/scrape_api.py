@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 import threading
 import decimal
 import time
+import re
 
 from ...models import Chains, Stores, Products, Prices
 from django.db.utils import IntegrityError
@@ -395,10 +396,18 @@ class ProductPrices():
                             ).text.replace('  ', ' ').strip()
 
                         # Get product price
-                        price = item.select_one(
-                            'p[data-testid="price"]'
-                            ).text.replace('about', '').replace('sale', '').strip()[1:]
-                        price = decimal.Decimal(price)
+                        data_testid_prices = item.select('[data-testid$="price"]')
+                        item_price = None
+                        for data_testid_price in data_testid_prices:
+                            if data_testid_price.attrs['data-testid'] in (
+                                'regular-price', 'non-members-price', 'sale-price'
+                            ):
+                                item_price = re.sub(r'[^\d\.]', '',
+                                                    data_testid_price.select_one('.css-idkz9h').text)
+                        item_price = decimal.Decimal(item_price)
+
+                        if not item_price:
+                            continue
 
                         # Save new product
                         if not Products.objects.filter(ProductName=name).exists():
@@ -415,15 +424,15 @@ class ProductPrices():
 
                         # Save new price
                         if not Prices.objects.filter(**criteria).exists():
-                            new_price = Prices(Price=price, **criteria)
+                            new_price = Prices(Price=item_price, **criteria)
                             new_price.save()
                             print('New price saved\n')
 
                         # Update existing price
-                        elif Prices.objects.get(**criteria).Price != price:
+                        elif Prices.objects.get(**criteria).Price != item_price:
                             current_price = Prices.objects.get(**criteria)
                             criteria['PriceID'] = current_price.pk
-                            price_update = {'Price': price}
+                            price_update = {'Price': item_price}
                             Prices.objects.filter(**criteria).update(**price_update)
                             print('Price updated\n')
 
