@@ -4,7 +4,6 @@ from django.contrib.auth import login, authenticate
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
 from myapp.forms import SignUpForm
 
 from .backend.scrape_api import scrape_api
@@ -28,18 +27,6 @@ def signup(request):
 
 @csrf_exempt
 def scrape(request):
-    if request.method == 'GET':
-        items = {
-            'stores': scrape_api.STORES,
-            'store_items': Stores.objects.all(),
-            'product_items': Products.objects.all(),
-            'price_items': Prices.objects.all(),
-        }
-        return render(request, 'scrape.html', items)
-
-
-@csrf_exempt
-def scrape(request):
     store = request.GET.get('chain')
     if request.path == '/scrape/get_locations':
         if store == 'Walmart':
@@ -52,7 +39,7 @@ def scrape(request):
         elif store in ('Loblaws', 'No Frills'):
             scrape_api.ProductPrices.get_Loblaws_brands(store)
     items = {
-        'store': request.GET.get('chain'),
+        'store': store,
         'stores': scrape_api.STORES,
         'store_items': Stores.objects.all(),
         'chain_items': Chains.objects.all(),
