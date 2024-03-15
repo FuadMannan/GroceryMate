@@ -56,17 +56,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 var popoverTriggerList = [].slice.call(document.querySelectorAll('.nutrition-info-btn'));
-                console.log(popoverTriggerList)
                 var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                    name = popoverTriggerEl.dataset.name;
                     return new bootstrap.Popover(popoverTriggerEl, {
                         animation: true,
                         title: 'Nutrition Information',
-                        content: getTable(),
+                        content: getTable(name),
                         trigger: 'focus',
                         html: true,
                     });
                 });
-
             });
         });
     });
@@ -129,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <span class="item-name text-center col-2">${chain}</span>
             <span class="item-name text-center col-2">${price}</span>
             <div class="btn-group col-2" role="group">
-                <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn">Nutrition
+                <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name=${product}>Nutrition
                     Info</i>
                 </button>
                 <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i>
@@ -139,26 +138,11 @@ document.addEventListener("DOMContentLoaded", function () {
         return item;
     }
 
-    data = {
-        "calories": 261.6,
-        "serving_size_g": 100.0,
-        "fat_total_g": 3.4,
-        "fat_saturated_g": 0.7,
-        "protein_g": 8.8,
-        "sodium_mg": 495,
-        "potassium_mg": 98,
-        "cholesterol_mg": 0,
-        "carbohydrates_total_g": 50.2,
-        "fiber_g": 2.7,
-        "sugar_g": 5.7,
-    };
-
-
     var popoverTriggerList = [].slice.call(document.querySelectorAll('.nutrition-info-btn'));
-    console.log(popoverTriggerList)
     var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        name = popoverTriggerEl.dataset.name;
         return new bootstrap.Popover(popoverTriggerEl, {
-            animation: true, title: 'Nutrition Information', content: getTable(), trigger: 'focus', html: true,
+            animation: true, title: 'Nutrition Information', content: getTable(name), trigger: 'focus', html: true,
         });
     });
 });
@@ -167,21 +151,8 @@ function saveItem(itemName, listId) {
     return ajax_req("POST", `/save_grocery_item/${listId}`, {name: itemName});
 }
 
-function getTable() {
-    data = {
-        "calories": 261.6,
-        "serving_size_g": 100.0,
-        "fat_total_g": 3.4,
-        "fat_saturated_g": 0.7,
-        "protein_g": 8.8,
-        "sodium_mg": 495,
-        "potassium_mg": 98,
-        "cholesterol_mg": 0,
-        "carbohydrates_total_g": 50.2,
-        "fiber_g": 2.7,
-        "sugar_g": 5.7,
-    };
-
+function getTable(name) {
+    data = ajax_req("GET", `/get_nutrition_info/${name}`);
 
     // Create a table element
     var table = document.createElement('table');

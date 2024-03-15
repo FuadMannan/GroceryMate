@@ -16,5 +16,6 @@ urlpatterns = [
     path('grocery_items/<int:id>', views.grocery_items),
     path('find_products/', views.find_products),
     path('add_grocery_list_item/', views.add_grocery_list_item),
-    path('delete_grocery_list_item/<int:id>', views.delete_grocery_list_item)
+    path('delete_grocery_list_item/<int:id>', views.delete_grocery_list_item),
+    path('get_nutrition_info/<str:name>', views.get_nutrition_info)
 ]

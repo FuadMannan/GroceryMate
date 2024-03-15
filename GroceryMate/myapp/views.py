@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from myapp.forms import SignUpForm
+from myapp.backend.nutrition.api import NutritionApi
 
 from .backend.scrape_api import scrape_api
 from .models import Chains, Stores, Products, Prices, GroceryLists, ListItems
@@ -91,11 +92,12 @@ def grocery_items(request, id):
         "grocery_list_name": name
     })
 
+
 def find_products(request):
     data = json.loads(request.body.decode('UTF-8'))
 
     results = {}
-    
+
     prices = Prices.objects.filter(ProductID__ProductName__icontains=data['name'])
 
     for i, price in enumerate(prices):
@@ -108,6 +110,7 @@ def find_products(request):
 
     return HttpResponse(json.dumps({'status': 200, 'items': results}), content_type="application/json")
 
+
 def add_grocery_list_item(request):
     data = json.loads(request.body.decode('UTF-8'))
 
@@ -115,14 +118,21 @@ def add_grocery_list_item(request):
     price = Prices.objects.get(PriceID=data['priceID'])
 
     listItem = ListItems.objects.create(
-        ListID=grocery_list, 
+        ListID=grocery_list,
         PriceID=price
     )
     listItem.save()
 
     return HttpResponse(json.dumps({'status': 200, 'id': listItem.ItemID}), content_type="application/json")
 
+
 def delete_grocery_list_item(request, id):
     ListItems.objects.filter(ItemID=id).delete()
 
     return HttpResponse(json.dumps({'status': 200}), content_type="application/json")
+
+
+def get_nutrition_info(request, name):
+    data = NutritionApi().get_nutrition(name)
+
+    return HttpResponse(json.dumps(data), content_type="application/json")

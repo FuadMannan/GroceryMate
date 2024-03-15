@@ -3,7 +3,7 @@ import json
 import requests
 
 BASE_URL = 'https://api.calorieninjas.com/v1'
-HEADERS = {'X-Api-Key': 'FAKEKEY'}
+HEADERS = {'X-Api-Key': 'FAKE'}
 
 """
 This is the real API key, so set it in above headers when you want to actually test API
@@ -39,4 +39,5 @@ class NutritionApi:
             # we just return the first item found
             return nutrition_infos[0]
 
-        raise Exception(f"Cannot retrieve nutrition for {food_item}")
+        print(f"Cannot retrieve nutrition for {food_item}")
+        return {}
