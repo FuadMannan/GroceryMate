@@ -42,13 +42,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 let listItemID = add_item(listID, priceID)['id'];
                 let li = this.closest('li');
 
-                const new_item = format_list_item(
-                    li.children[0].textContent.trim(), 
-                    li.children[1].textContent, 
-                    li.children[2].textContent,
-                    listItemID
-                );
-                
+                const new_item = format_list_item(li.children[0].textContent.trim(), li.children[1].textContent, li.children[2].textContent, listItemID);
+
                 itemList.insertAdjacentHTML('beforeend', new_item);
                 document.getElementById('searchResults').remove();
 
@@ -59,6 +54,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         deleteItem(listItem);
                     });
                 });
+
+                var popoverTriggerList = [].slice.call(document.querySelectorAll('.nutrition-info-btn'));
+                console.log(popoverTriggerList)
+                var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                    return new bootstrap.Popover(popoverTriggerEl, {
+                        animation: true,
+                        title: 'Nutrition Information',
+                        content: getTable(),
+                        trigger: 'focus',
+                        html: true,
+                    });
+                });
+
             });
         });
     });
@@ -86,8 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function format_search_results(results) {
-        let result_table = 
-        `<div id="searchResults" class="grocery-list-items-container pb-5">
+        let result_table = `<div id="searchResults" class="grocery-list-items-container pb-5">
             <h5>Products</h5>
             <span class="container d-flex px-3">
                 <span class="col-6">Name</span>
@@ -97,13 +104,12 @@ document.addEventListener("DOMContentLoaded", function () {
             </span>
             <ul class="list-group">`;
         for (i in results) {
-            result_table +=
-            `<li class="list-group-item d-flex justify-content-between align-items-center">
+            result_table += `<li class="list-group-item d-flex justify-content-between align-items-center">
                 <a href="#" class="grocery-list-item-link col-6">
-                    ${ results[i]['ProductName'] }
+                    ${results[i]['ProductName']}
                 </a>
-                <span class="item-name text-center col-2">${ results[i]['ChainName'] }</span>
-                <span class="item-name text-center col-2">$${ results[i]['Price'] }</span>
+                <span class="item-name text-center col-2">${results[i]['ChainName']}</span>
+                <span class="item-name text-center col-2">$${results[i]['Price']}</span>
                 <div class="btn-group col-2" role="group">
                     <button class="btn btn-primary" type="button" data-price-id="${results[i]['PriceID']}">
                         Add
@@ -116,15 +122,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function format_list_item(product, chain, price, listItemID) {
-        let item =
-        `<li class="list-group-item d-flex justify-content-between align-items-center" data-id=${listItemID}>
+        let item = `<li class="list-group-item d-flex justify-content-between align-items-center" data-id=${listItemID}>
             <a href="#" class="grocery-list-item-link col-6">
                 <span class="item-name">${product}</span>
             </a>
             <span class="item-name text-center col-2">${chain}</span>
             <span class="item-name text-center col-2">${price}</span>
             <div class="btn-group col-2" role="group">
-                <button type="button" class="btn btn-outline-primary rename-btn" id="nutrition-info">Nutrition
+                <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn">Nutrition
                     Info</i>
                 </button>
                 <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i>
@@ -134,6 +139,35 @@ document.addEventListener("DOMContentLoaded", function () {
         return item;
     }
 
+    data = {
+        "calories": 261.6,
+        "serving_size_g": 100.0,
+        "fat_total_g": 3.4,
+        "fat_saturated_g": 0.7,
+        "protein_g": 8.8,
+        "sodium_mg": 495,
+        "potassium_mg": 98,
+        "cholesterol_mg": 0,
+        "carbohydrates_total_g": 50.2,
+        "fiber_g": 2.7,
+        "sugar_g": 5.7,
+    };
+
+
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('.nutrition-info-btn'));
+    console.log(popoverTriggerList)
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl, {
+            animation: true, title: 'Nutrition Information', content: getTable(), trigger: 'focus', html: true,
+        });
+    });
+});
+
+function saveItem(itemName, listId) {
+    return ajax_req("POST", `/save_grocery_item/${listId}`, {name: itemName});
+}
+
+function getTable() {
     data = {
         "calories": 261.6,
         "serving_size_g": 100.0,
@@ -179,15 +213,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     table.appendChild(tbody);
 
-    var button = document.getElementById('nutrition-info')
-
-    // Initialize popover on the button
-    new bootstrap.Popover(button, {
-        animation: true,
-        title: 'Nutrition Information',
-        content: table,
-        trigger: 'focus',
-        html: true,
-    });
-
-});
+    return table;
+}
