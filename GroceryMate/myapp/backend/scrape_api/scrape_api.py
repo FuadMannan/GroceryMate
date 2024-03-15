@@ -9,6 +9,7 @@ import time
 import re
 
 from ...models import Chains, Stores, Products, Prices
+from GroceryMate.settings import BASE_DIR
 from django.db.utils import IntegrityError
 
 STORES = [
@@ -79,7 +80,7 @@ class Locations:
 
     @staticmethod
     def init():
-        f = open('cities.txt')
+        f = open(f'{BASE_DIR}/cities.txt', 'r')
         Locations.cities = f.read().split('\n')
         f.close()
         chains = Chains.objects.all().values()
