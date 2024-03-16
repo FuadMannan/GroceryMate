@@ -29,7 +29,11 @@
         </div>
         <select id="chain" name="chain" class="form-select my-2">
             {% for store in stores %}
-            <option value="{{store}}">{{store}}</option>
+                {% if store == "Walmart" %}
+                    <option value="{{ store }}" disabled>{{ store }}</option>
+                {% else %}
+                    <option value="{{ store }}">{{ store }}</option>
+                {% endif %}
             {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Scrape</button>
@@ -66,7 +70,11 @@
         </div>
         <select id="chain" name="chain" class="form-select my-2">
             {% for store in stores %}
-                <option value="{{ store }}">{{ store }}</option>
+                {% if store == "Walmart" %}
+                    <option value="{{ store }}" disabled>{{ store }}</option>
+                {% else %}
+                    <option value="{{ store }}">{{ store }}</option>
+                {% endif %}
             {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Scrape</button>
@@ -105,7 +113,11 @@
         </div>
         <select id="chain" name="chain" class="form-select my-2">
             {% for store in stores %}
-            <option value="{{store}}">{{store}}</option>
+                {% if store == "Walmart" %}
+                    <option value="{{ store }}" disabled>{{ store }}</option>
+                {% else %}
+                    <option value="{{ store }}">{{ store }}</option>
+                {% endif %}
             {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Scrape</button>

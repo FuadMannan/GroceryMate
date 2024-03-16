@@ -30,20 +30,15 @@ def signup(request):
 def scrape(request):
     store = request.GET.get('chain')
     if request.path == '/scrape/get_locations':
-        if store == 'Walmart':
-            scrape_api.Locations.get_Walmart()
-        elif store in ('Loblaws', 'No Frills'):
+        if store in ('Loblaws', 'No Frills'):
             scrape_api.Locations.get_Loblaws_brands(store)
     elif request.path == '/scrape/get_products_prices':
-        if store == 'Walmart':
-            scrape_api.ProductPrices.get_Walmart()
-        elif store in ('Loblaws', 'No Frills'):
+        if store in ('Loblaws', 'No Frills'):
             scrape_api.ProductPrices.get_Loblaws_brands(store)
     items = {
         'store': store,
         'stores': scrape_api.STORES,
         'store_items': Stores.objects.all(),
-        'chain_items': Chains.objects.all(),
         'product_items': Products.objects.all(),
         'price_items': Prices.objects.all(),
     }
