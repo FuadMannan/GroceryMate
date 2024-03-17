@@ -58,11 +58,6 @@ class Scraper(ABC):
         self.soup = BeautifulSoup(page_text, 'html.parser')
 
 
-    @staticmethod
-    def print_city(name, location):
-        print(f"name: {name}\nlocation: {location}")
-
-
     def load_locator(self):
         pass
 
@@ -79,6 +74,7 @@ class Scraper(ABC):
 
     def save_store(self, name, location):
         try:
+            print(f'name: {name}\nlocation: {location}')
             criteria = {'ChainID': self.chain, 'StoreName': name, 'Location': location}
             if not Stores.objects.filter(**criteria).exists():
                 store = Stores(**criteria)
@@ -92,20 +88,22 @@ class Scraper(ABC):
 
     def save_product(self, name):
         try:
+            print(f'Product: {name}')
             if not Products.objects.filter(ProductName=name).exists():
                 product = Products(ProductName=name)
                 product.save()
-                print('New product saved\n')
+                print('New product saved')
             else:
-                print('Existing product\n')
+                print('Existing product')
                 product = Products.objects.get(ProductName=name)
             return product
         except IntegrityError as e:
-            print(f'{e.__cause__}, skipping product\n')
+            print(f'{e.__cause__}, skipping product')
 
 
     def save_price(self, product, price):
         try:
+            print(f'Price: ${price}')
             criteria = {'ChainID': self.chain, 'ProductID': product}
             if not Prices.objects.filter(**criteria).exists():
                 new_price = Prices(**criteria, Price=price)
@@ -181,7 +179,6 @@ class LoblawsBrands(Scraper):
         for item in list_items:
             name = item.select_one('h2').text
             location = ', '.join([element.text for element in item.select('div.location-address__line')])
-            self.print_city(name, location)
             self.save_store(name, location)
 
 
@@ -267,7 +264,6 @@ class Metro(Scraper):
                 for result in results:
                     name = result.select_one('p.store-name').text
                     location = ", ".join([i.text.strip('\n') for i in result.select('div[class^="address--line"]')])
-                    self.print_city(name, location)
                     self.save_store(name, location)
 
 
@@ -295,7 +291,6 @@ class Metro(Scraper):
                     if len(product_price) == 1:
                         product_price = product_price[0].text.strip('$')
                     else:
-                        print(f"{item.select_one('.pricing__secondary-price span').text}\n")
                         product_price = re.findall('\d+\.?\d+', item.select_one('.pricing__secondary-price span').text)[0]
                     product_price = decimal.Decimal(product_price)
                     self.save_price(product, product_price)
