@@ -30,7 +30,10 @@ def signup(request):
 def scrape(request):
     store = request.GET.get('chain')
     if store in scrape_api.CHAIN_NAMES[1:]:
-        scraper = scrape_api.LoblawsBrands(store)
+        if scrape_api.CHAIN_NAMES.index(store) < 7:
+            scraper = scrape_api.LoblawsBrands(store)
+        else:
+            scraper = scrape_api.Metro()
     if request.path == '/scrape/get_locations':
             scraper.get_locations()
     elif request.path == '/scrape/get_products_prices':
