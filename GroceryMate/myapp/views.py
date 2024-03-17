@@ -1,10 +1,11 @@
 import json
 
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from myapp.forms import SignUpForm
+from myapp.forms import SignUpForm, UserProfileForm
 from myapp.backend.nutrition.api import NutritionApi
 
 from .backend.scrape_api import scrape_api
@@ -24,6 +25,18 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form, "page": "signup"})
+
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = UserProfileForm(instance=request.user.profile)
+    return render(request, 'user_profile.html', {'form': form})
 
 
 @csrf_exempt
@@ -98,7 +111,8 @@ def find_products(request):
 
     results = {}
 
-    prices = Prices.objects.filter(ProductID__ProductName__icontains=data['name'])
+    prices = Prices.objects.filter(
+        ProductID__ProductName__icontains=data['name'])
 
     for i, price in enumerate(prices):
         item = {}
