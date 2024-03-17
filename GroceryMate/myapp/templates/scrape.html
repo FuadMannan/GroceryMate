@@ -28,12 +28,8 @@
             Scrape Test
         </div>
         <select id="chain" name="chain" class="form-select my-2">
-            {% for chain in chains %}
-                {% if chain == "Walmart" %}
-                    <option value="{{ chain }}" disabled>{{ chain }}</option>
-                {% else %}
-                    <option value="{{ chain }}">{{ chain }}</option>
-                {% endif %}
+            {% for store in stores %}
+            <option value="{{store}}">{{store}}</option>
             {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Scrape</button>
@@ -69,12 +65,8 @@
             Scrape Test
         </div>
         <select id="chain" name="chain" class="form-select my-2">
-            {% for chain in chains %}
-                {% if chain == "Walmart" %}
-                    <option value="{{ chain }}" disabled>{{ chain }}</option>
-                {% else %}
-                    <option value="{{ chain }}">{{ chain }}</option>
-                {% endif %}
+            {% for store in stores %}
+                <option value="{{ store }}">{{ store }}</option>
             {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Scrape</button>
@@ -112,12 +104,8 @@
             Scrape Test
         </div>
         <select id="chain" name="chain" class="form-select my-2">
-            {% for chain in chains %}
-                {% if chain == "Walmart" %}
-                    <option value="{{ chain }}" disabled>{{ chain }}</option>
-                {% else %}
-                    <option value="{{ chain }}">{{ chain }}</option>
-                {% endif %}
+            {% for store in stores %}
+            <option value="{{store}}">{{store}}</option>
             {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Scrape</button>

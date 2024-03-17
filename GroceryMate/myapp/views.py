@@ -9,7 +9,7 @@ from myapp.forms import SignUpForm, UserProfileForm
 from myapp.backend.nutrition.api import NutritionApi
 
 from .backend.scrape_api import scrape_api
-from .models import Stores, Products, Prices, GroceryLists, ListItems
+from .models import Chains, Stores, Products, Prices, GroceryLists, ListItems
 
 
 def signup(request):
@@ -42,16 +42,21 @@ def profile(request):
 @csrf_exempt
 def scrape(request):
     store = request.GET.get('chain')
-    if store in scrape_api.CHAIN_NAMES[1:]:
-        scraper = scrape_api.LoblawsBrands(store)
     if request.path == '/scrape/get_locations':
-            scraper.get_locations()
+        if store == 'Walmart':
+            scrape_api.Locations.get_Walmart()
+        elif store in ('Loblaws', 'No Frills'):
+            scrape_api.Locations.get_Loblaws_brands(store)
     elif request.path == '/scrape/get_products_prices':
-            scraper.get_products_prices()
+        if store == 'Walmart':
+            scrape_api.ProductPrices.get_Walmart()
+        elif store in ('Loblaws', 'No Frills'):
+            scrape_api.ProductPrices.get_Loblaws_brands(store)
     items = {
         'store': store,
-        'chains': scrape_api.CHAIN_NAMES,
+        'stores': scrape_api.STORES,
         'store_items': Stores.objects.all(),
+        'chain_items': Chains.objects.all(),
         'product_items': Products.objects.all(),
         'price_items': Prices.objects.all(),
     }
