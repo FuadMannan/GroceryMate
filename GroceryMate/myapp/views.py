@@ -29,7 +29,7 @@ def signup(request):
 @csrf_exempt
 def scrape(request):
     store = request.GET.get('chain')
-    if store in scrape_api.STORES[1:]:
+    if store in scrape_api.CHAIN_NAMES[1:]:
         scraper = scrape_api.LoblawsBrands(store)
     if request.path == '/scrape/get_locations':
             scraper.get_locations()
@@ -37,7 +37,7 @@ def scrape(request):
             scraper.get_products_prices()
     items = {
         'store': store,
-        'stores': scrape_api.STORES,
+        'chains': scrape_api.CHAIN_NAMES,
         'store_items': Stores.objects.all(),
         'product_items': Products.objects.all(),
         'price_items': Prices.objects.all(),

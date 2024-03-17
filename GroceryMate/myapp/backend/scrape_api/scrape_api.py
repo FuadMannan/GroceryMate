@@ -9,7 +9,8 @@ import re
 from ...models import Chains, Stores, Products, Prices
 from django.db.utils import IntegrityError
 
-STORES = [
+
+CHAIN_NAMES = [
     'Walmart',
     'Loblaws',
     'No Frills',
