@@ -5,11 +5,9 @@ from django.db import models
 # Create your models here.
 
 class Products(models.Model):
-    ProductID = models.BigAutoField(
-        primary_key=True, verbose_name='Product ID')
+    ProductID = models.BigAutoField(primary_key=True, verbose_name='Product ID')
     ProductName = models.CharField(max_length=255)
     Category = models.CharField(max_length=255, null=True)
-
 
 class Chains(models.Model):
     ChainID = models.SmallAutoField(primary_key=True, verbose_name='Chain ID')
@@ -31,8 +29,7 @@ class Prices(models.Model):
 
 
 class NutritionalInfo(models.Model):
-    NutritionID = models.BigAutoField(
-        primary_key=True, verbose_name='Nutrition ID')
+    NutritionID = models.BigAutoField(primary_key=True, verbose_name='Nutrition ID')
     ProductID = models.ForeignKey(Products, on_delete=models.CASCADE)
     Calories = models.DecimalField(max_digits=7, decimal_places=2)
     ServingSize = models.DecimalField(max_digits=7, decimal_places=2)
@@ -61,9 +58,3 @@ class ListItems(models.Model):
     Quantity = models.SmallIntegerField(null=True)
     Unit = models.CharField(max_length=10, null=True)
     IsChecked = models.BooleanField(default=False)
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
