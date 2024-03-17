@@ -7,6 +7,7 @@ import decimal
 import time
 import re
 import json
+import traceback
 
 from ...models import Chains, Stores, Products, Prices
 from django.db.utils import IntegrityError
@@ -143,14 +144,7 @@ class Scraper(ABC):
                     action()
         except (StaleElementReferenceException, Exception) as e:
             error_message = f'Encountered {type(e)} at {self.driver.current_url}:\n'
-            if hasattr(e, 'msg'):
-                error_message += f'msg: {e.msg}\n'
-            if hasattr(e, 'message'):
-                error_message += f'message: {e.message}\n'
-            error_message += f'Cause: {e.__cause__}\n'
-            if hasattr(e, 'stacktrace'):
-                error_message += f'Stacktrace: {e.stacktrace}\n'
-            error_message += f'{e}\n'
+            error_message += f'{traceback.format_exc()}\n'
             print(error_message)
         else:
             print('Actions completed, exiting browser')
