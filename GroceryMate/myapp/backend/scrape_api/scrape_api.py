@@ -36,8 +36,14 @@ class Scraper(ABC):
         self.grocery_URL = None
         self.driver = None
         self.soup = None
-        self.location_actions = ((self.open_with_driver, self.locator_URL), self.load_locator, self.loop_locations)
-        self.grocery_actions = ((self.open_with_driver, self.grocery_URL), self.loop_grocery_items)
+
+
+    def get_location_actions(self):
+        return ((self.open_with_driver, self.locator_URL), self.loop_locations)
+
+
+    def get_grocery_actions(self):
+        return ((self.open_with_driver, self.grocery_URL), self.loop_grocery_items)
 
 
     def open_with_driver(self, url: str = None):
@@ -127,11 +133,11 @@ class Scraper(ABC):
 
 
     def get_locations(self):
-        self.attempt(self.location_actions)
+        self.attempt(self.get_location_actions())
 
 
     def get_products_prices(self):
-        self.attempt(self.grocery_actions)
+        self.attempt(self.get_grocery_actions())
 
 
     def attempt(self, actions):
@@ -162,14 +168,13 @@ class LoblawsBrands(Scraper):
         self.chain = Chains.objects.get(ChainName=self.brand)
         self.grocery_URL = f"https://www.{brand.lower().replace(' ', '').replace('-', '')}.ca"
         self.locator_URL = f"{self.grocery_URL}/store-locator"
-        self.location_actions = ((self.open_with_driver, self.locator_URL), self.loop_locations)
 
 
     def loop_locations(self):
         loaded = False
         while not loaded:
             time.sleep(1)
-            self.update_page_soup
+            self.update_page_soup()
             list_items = self.soup.select('li.location-list__item')
             if len(list_items) > 0:
                 loaded = True
@@ -235,7 +240,10 @@ class Metro(Scraper):
         self.chain = Chains.objects.get(ChainName='Metro')
         self.grocery_URL = 'https://www.metro.ca/en/'
         self.locator_URL = f'{self.grocery_URL}find-a-grocery'
-        self.location_actions = (self.loop_locations,)
+
+
+    def get_location_actions(self):
+        return (self.loop_locations,)
 
 
     def loop_locations(self):
