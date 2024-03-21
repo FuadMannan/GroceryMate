@@ -27,9 +27,15 @@ class BaseModel(models.Model):
         return super().save(*args, **kwargs)
 
 
+class Brands(BaseModel):
+    BrandID = models.BigAutoField(primary_key=True, verbose_name='Brand ID')
+    BrandName = models.CharField(max_length=255)
+
+
 class Products(BaseModel):
     ProductID = models.BigAutoField(primary_key=True, verbose_name='Product ID')
     ProductName = models.CharField(max_length=255)
+    BrandID = models.ForeignKey(Brands, on_delete=models.CASCADE)
     Category = models.CharField(max_length=255, default='None')
 
 
