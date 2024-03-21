@@ -51,6 +51,7 @@
             <thead>
                 <th>ProductID</th>
                 <th>Product Name</th>
+                <th>Brand</th>
                 <th>Category</th>
             </thead>
             <tbody>
@@ -58,6 +59,7 @@
                 <tr>
                     <td>{{ item.ProductID }}</td>
                     <td>{{ item.ProductName }}</td>
+                    <td>{{ item.BrandID.BrandName }}</td>
                     <td>{{ item.Category }}</td>
                 </tr>
                 {% endfor %}

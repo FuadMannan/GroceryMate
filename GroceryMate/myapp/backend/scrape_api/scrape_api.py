@@ -9,7 +9,7 @@ import re
 import json
 import traceback
 
-from ...models import Chains, Stores, Products, Prices
+from ...models import Chains, Stores, Products, Prices, Brands
 from django.db.utils import IntegrityError
 
 
@@ -86,16 +86,32 @@ class Scraper(ABC):
             print(f'{e.__cause__}, skipping store\n')
 
 
-    def save_product(self, name):
+    def save_brand(self, name):
+        try:
+            print(f'Brand: {name}')
+            if not Brands.objects.filter(BrandName=name).exists():
+                brand = Brands(BrandName=name)
+                brand.save()
+                print('New brand saved')
+            else:
+                print('Existing brand')
+                brand = Brands.objects.get(BrandName=name)
+            return brand
+        except IntegrityError as e:
+            print(f'{e.__cause__}, skipping brand')
+
+
+    def save_product(self, name, brand):
         try:
             print(f'Product: {name}')
-            if not Products.objects.filter(ProductName=name).exists():
-                product = Products(ProductName=name)
+            criteria = {'ProductName': name, 'BrandID': brand}
+            if not Products.objects.filter(**criteria).exists():
+                product = Products(**criteria)
                 product.save()
                 print('New product saved')
             else:
                 print('Existing product')
-                product = Products.objects.get(ProductName=name)
+                product = Products.objects.get(**criteria)
             return product
         except IntegrityError as e:
             print(f'{e.__cause__}, skipping product')
@@ -216,7 +232,10 @@ class LoblawsBrands(Scraper):
                     items = self.soup.select('div.chakra-linkbox')
                     for item in items:
                         product_name = item.select_one('h3[data-testid="product-title"]').text.replace('  ', ' ').strip()
-                        product = self.save_product(product_name)
+                        brand_name = item.select_one('[data-testid="product-brand"]')
+                        brand_name = brand_name.text if brand_name else 'None'
+                        brand = self.save_brand(brand_name)
+                        product = self.save_product(product_name, brand)
                         data_testid_prices = item.select('[data-testid$="price"]')
                         product_price = None
                         for data_testid_price in data_testid_prices:
