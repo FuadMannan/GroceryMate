@@ -1,3 +1,7 @@
 .grocery-items-div{
     margin-top: 10px;
 }
+
+.quantity-header{
+    padding: 0rem 0.75rem;
+}

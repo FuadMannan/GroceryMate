@@ -1,12 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
     const itemList = document.getElementById('grocery-list-items-container');
 
-    // Add event listeners to Add new Item button
-    document.querySelectorAll('#add-new-item-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            let addListModal = new bootstrap.Modal(document.getElementById("add-item-modal"), {});
-            addListModal.show();
-        });
+    document.getElementById('add-item-modal').addEventListener('hidden.bs.modal', (event) => {
+        $('.modal-title')[0].textContent = 'Prices';
+        $('#prices-list').remove();
     });
 
     // Add event listeners to all delete buttons
@@ -27,57 +24,81 @@ document.addEventListener("DOMContentLoaded", function () {
             result_table.remove();
         }
 
-        response = find_items(itemName)['items'];
+        const productsResponse = get_products(itemName)['items'];
 
         // Show search results
-        const search_results = format_search_results(response);
+        const products_list = format_product_results(productsResponse);
         const inputGroup = document.getElementsByClassName('input-group')[0];
-        inputGroup.insertAdjacentHTML('afterend', search_results);
+        inputGroup.insertAdjacentHTML('afterend', products_list);
 
-        // Add item to list and update page
-        document.querySelectorAll('[data-price-id]').forEach(button => {
+        // Add event listeners to Add new Item button
+        document.querySelectorAll('[data-product-id]').forEach(button => {
             button.addEventListener('click', function () {
-                let listID = document.URL.split('items/')[1].split('#')[0];
-                let priceID = this.getAttribute('data-price-id');
-                let listItemID = add_item(listID, priceID)['id'];
-                let li = this.closest('li');
-
-                const new_item = format_list_item(li.children[0].textContent.trim(), li.children[1].textContent, li.children[2].textContent, listItemID);
-
-                itemList.insertAdjacentHTML('beforeend', new_item);
-                document.getElementById('searchResults').remove();
-
-                // Add event listeners to all delete buttons
-                document.querySelectorAll('.delete-btn').forEach(button => {
+                const productRow = this.closest('li').children;
+                const productID = this.getAttribute('data-product-id');
+                const pricesResponse = get_prices(productID)['items'];
+                const prices_list = format_price_results(pricesResponse);
+                const priceListModal = new bootstrap.Modal(document.getElementById("add-item-modal"), {});
+                $('.modal-title')[0].textContent += ` for ${productRow[0].text.trim()}`;
+                $('.modal-body')[0].children[0].insertAdjacentHTML('afterend', prices_list);
+                priceListModal.show();
+                // Add item to list and update page
+                document.querySelectorAll('[data-price-id]').forEach(button => {
                     button.addEventListener('click', function () {
-                        const listItem = this.closest('.list-group-item');
-                        deleteItem(listItem);
-                    });
-                });
+                        priceListModal.hide();
+                        $('.modal-title')[0].textContent = 'Prices';
+                        $('#prices-list').remove();
+                        $('#searchResults').remove();
+                        const productName = productRow[0].text.trim();
+                        const brandName = productRow[1].textContent;
+                        const listID = document.URL.split('items/')[1].split('#')[0];
+                        const priceID = this.getAttribute('data-price-id');
+                        const children = this.closest('li').children;
+                        const price = children[1].textContent;
+                        const quantity = children[2].children[0].value;
+                        const listItemID = add_item(listID, priceID, quantity)['id'];
 
-                var popoverTriggerList = [].slice.call(document.querySelectorAll('.nutrition-info-btn'));
-                var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-                    name = popoverTriggerEl.dataset.name;
-                    return new bootstrap.Popover(popoverTriggerEl, {
-                        animation: true,
-                        title: 'Nutrition Information',
-                        content: getTable(name),
-                        trigger: 'focus',
-                        html: true,
+                        const new_item = format_list_item(productName, brandName, quantity, '', price, listItemID);
+                        itemList.insertAdjacentHTML('beforeend', new_item);
+
+                        // Add event listeners to all delete buttons
+                        document.querySelectorAll('.delete-btn').forEach(button => {
+                            button.addEventListener('click', function () {
+                                const listItem = this.closest('.list-group-item');
+                                deleteItem(listItem);
+                            });
+                        });
+
+                        var popoverTriggerList = [].slice.call(document.querySelectorAll('.nutrition-info-btn'));
+                        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                            name = popoverTriggerEl.dataset.name;
+                            return new bootstrap.Popover(popoverTriggerEl, {
+                                animation: true,
+                                title: 'Nutrition Information',
+                                content: getTable(name),
+                                trigger: 'focus',
+                                html: true,
+                            });
+                        });
                     });
                 });
             });
         });
+
     });
 
     // Function to handle searching for items
-    function find_items(itemName) {
-        return ajax_req("POST", "/find_products/", {name: itemName});
+    function get_products(itemName) {
+        return ajax_req("POST", "/get_products/", {name: itemName});
+    }
+
+    function get_prices(productID) {
+        return ajax_req("POST", "/get_prices/", {id: productID})
     }
 
     // Function to handle adding item to list
-    function add_item(listID, priceID) {
-        return ajax_req("POST", "/add_grocery_list_item/", {listID: listID, priceID: priceID});
+    function add_item(listID, priceID, quantity) {
+        return ajax_req("POST", "/add_grocery_list_item/", {listID: listID, priceID: priceID, quantity: quantity});
     }
 
     // Function to handle item deletion
@@ -92,44 +113,64 @@ document.addEventListener("DOMContentLoaded", function () {
         ajax_req("POST", "/delete_grocery_list_item/" + listItemId, {});
     }
 
-    function format_search_results(results) {
+    function format_product_results(results) {
         let result_table = `<div id="searchResults" class="grocery-list-items-container pb-5">
             <h5>Products</h5>
             <span class="container d-flex px-3">
-                <span class="col-6">Name</span>
-                <span class="text-center col-2">Chain</span>
-                <span class="text-center col-2">Price</span>
+                <span class="col-5">Name</span>
+                <span class="text-center col-5">Brand</span>
                 <span class="col-2"></span>
             </span>
             <ul class="list-group">`;
         for (i in results) {
             result_table += `<li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="#" class="grocery-list-item-link col-6">
+                <a href="#" class="grocery-list-item-link col-5">
                     ${results[i]['ProductName']}
                 </a>
-                <span class="item-name text-center col-2">${results[i]['ChainName']}</span>
-                <span class="item-name text-center col-2">$${results[i]['Price']}</span>
+                <span class="text-center col-5">${results[i]['BrandName']}</span>
                 <div class="btn-group col-2" role="group">
-                    <button class="btn btn-primary" type="button" data-price-id="${results[i]['PriceID']}">
-                        Add
+                    <button class="btn btn-primary" type="button" data-product-id="${results[i]['ProductID']}">
+                        View Prices
                     </button>
                 </div>
-            </li>`
+            </li>`;
         }
         result_table += `</ul></div>`;
         return result_table;
     }
 
-    function format_list_item(product, chain, price, listItemID) {
-        let item = `<li class="list-group-item d-flex justify-content-between align-items-center" data-id=${listItemID}>
-            <a href="#" class="grocery-list-item-link col-6">
-                <span class="item-name">${product}</span>
+    function format_price_results(results) {
+        let result_table = `<ul id="prices-list" class="list-group">`;
+        for (i in results) {
+            result_table += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="col">${results[i]['ChainName']}</span>
+                <span class="col">$${results[i]['Price']}</span>
+                <span class="col">
+                    <input id="quantity" type="number" min="1" max="100" value="1" class="form-control w-75">
+                </span>
+                <div class="btn-group col" role="group">
+                    <button class="btn btn-primary" type="button" data-price-id="${results[i]['PriceID']}">
+                        Add Item
+                    </button>
+                </div>
+            </li>`;
+        }
+        result_table += `</ul></div>`;
+        return result_table;
+    }
+
+    function format_list_item(productName, brandName, quantity, unit, price, listItemID) {
+        let item = `<li class="list-group-item d-flex align-items-center" data-id=${listItemID}>
+            <a href="#" class="grocery-list-item-link col">
+                ${productName}
             </a>
-            <span class="item-name text-center col-2">${chain}</span>
-            <span class="item-name text-center col-2">${price}</span>
-            <div class="btn-group col-2" role="group">
-                <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name=${product}>Nutrition
-                    Info</i>
+            <span class="text-center col">${brandName}</span>
+            <span class="text-center col">${quantity}</span>
+            <span class="text-center col">${unit}</span>
+            <span class="text-center col">${price}</span>
+            <div class="btn-group col" role="group">
+                <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name=${productName}>
+                    Nutrition Info</i>
                 </button>
                 <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i>
                 </button>

@@ -18,30 +18,28 @@
     <div class="input-group pb-5">
         <input id="search-item-input" type="text" class="form-control" aria-label="Add Item to your grocery list">
         <button id="search-btn" type="button" class="btn btn-outline-secondary">Search</button>
-<!--=======-->
-<!--    <div class="input-group">-->
-<!--        <input type="text" class="form-control" aria-label="Add Item to your grocery list" id="add-items-input">-->
-<!--        <button type="button" class="btn btn-outline-secondary" id="add-items" data-list-id="{{listId}}">Add Item</button>-->
-<!--&gt;>>>>>> Stashed changes-->
     </div>
 
     <div class="grocery-items-div" id="grocery-items-div-id">
         <h5>Items</h5>
-        <span class="container d-flex px-3">
-            <span class="col-6">Name</span>
-            <span class="text-center col-2">Chain</span>
+        <span class="container d-flex px-2">
+            <span class="col-2">Name</span>
+            <span class="text-center col-2">Brand</span>
+            <span class="text-center col-2">Quantity</span>
+            <span class="text-center col-2">Units</span>
             <span class="text-center col-2">Price</span>
-            <span class="col-2"></span>
         </span>
         <ul class="list-group" id="grocery-list-items-container">
             {% for item in grocery_list_items %}
-                <li class="list-group-item d-flex justify-content-between align-items-center" data-id={{item.ItemID}}>
-                    <a href="#" class="grocery-list-item-link col-6">
-                        <span class="item-name">{{item.PriceID.ProductID.ProductName}}</span>
+                <li class="list-group-item d-flex align-items-center" data-id={{item.ItemID}}>
+                    <a href="#" class="grocery-list-item-link col">
+                        <span>{{item.PriceID.ProductID.ProductName}}</span>
                     </a>
-                    <span class="item-name text-center col-2">{{item.PriceID.ChainID.ChainName}}</span>
-                    <span class="item-name text-center col-2">${{item.PriceID.Price}}</span>
-                    <div class="btn-group col-2" role="group">
+                    <span class="text-center col">{{item.PriceID.ProductID.BrandID.BrandName}}</span>
+                    <span class="text-center col">{{item.Quantity}}</span>
+                    <span class="text-center col">{{item.Unit}}</span>
+                    <span class="text-center col">${{item.PriceID.Price}}</span>
+                    <div class="btn-group col" role="group">
                         <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name="{{item.PriceID.ProductID.ProductName}}">Nutrition
                             Info</i>
                         </button>
@@ -51,6 +49,29 @@
                 </li>
             {% endfor %}
         </ul>
+    </div>
+</div>
+
+<!-- Modals -->
+<div class="modal" id="add-item-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Prices</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <span class="container d-flex px-3">
+                    <span class="col-3">Chain</span>
+                    <span class="col-3">Price</span>
+                    <span class="col-3">
+                        <div class="w-75 text-center quantity-header">Quantity</div>
+                    </span>
+                </span>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
     </div>
 </div>
 

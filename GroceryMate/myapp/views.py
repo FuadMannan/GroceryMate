@@ -91,21 +91,36 @@ def grocery_items(request, id):
     })
 
 
-def find_products(request):
+def get_products(request):
     data = json.loads(request.body.decode('UTF-8'))
 
     results = {}
 
-    prices = Prices.objects.filter(ProductID__ProductName__icontains=data['name'])
+    products = Products.objects.filter(ProductName__icontains=data['name'])
+    # products = products.select_related('BrandID').prefetch_related('prices_set')
 
+    for i, product in enumerate(products):
+        item = {}
+        item['ProductName'] = product.ProductName
+        item['BrandName'] = product.BrandID.BrandName
+        item['ProductID'] = product.ProductID
+        results[f'{i}'] = item
+
+    return HttpResponse(json.dumps({'status': 200, 'items': results}), content_type="application/json")
+
+
+def get_prices(request):
+    data = json.loads(request.body.decode('UTF-8'))
+
+    results = {}
+
+    prices = Prices.objects.filter(ProductID=data['id'])
     for i, price in enumerate(prices):
         item = {}
-        item['ProductName'] = price.ProductID.ProductName
         item['ChainName'] = price.ChainID.ChainName
         item['Price'] = str(price.Price)
         item['PriceID'] = price.pk
         results[f'{i}'] = item
-
     return HttpResponse(json.dumps({'status': 200, 'items': results}), content_type="application/json")
 
 
@@ -114,10 +129,12 @@ def add_grocery_list_item(request):
 
     grocery_list = GroceryLists.objects.get(ListID=data['listID'])
     price = Prices.objects.get(PriceID=data['priceID'])
+    quantity = data['quantity']
 
     listItem = ListItems.objects.create(
         ListID=grocery_list,
-        PriceID=price
+        PriceID=price,
+        Quantity=quantity
     )
     listItem.save()
 
