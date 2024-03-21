@@ -7,7 +7,8 @@ from django.db import models
 class Products(models.Model):
     ProductID = models.BigAutoField(primary_key=True, verbose_name='Product ID')
     ProductName = models.CharField(max_length=255)
-    Category = models.CharField(max_length=255, null=True)
+    Category = models.CharField(max_length=255, default='None')
+
 
 class Chains(models.Model):
     ChainID = models.SmallAutoField(primary_key=True, verbose_name='Chain ID')
@@ -55,6 +56,6 @@ class ListItems(models.Model):
     ItemID = models.BigAutoField(primary_key=True, verbose_name='List Item ID')
     ListID = models.ForeignKey(GroceryLists, on_delete=models.CASCADE)
     PriceID = models.ForeignKey(Prices, on_delete=models.CASCADE)
-    Quantity = models.SmallIntegerField(null=True)
-    Unit = models.CharField(max_length=10, null=True)
+    Quantity = models.SmallIntegerField(default=1)
+    Unit = models.CharField(max_length=10, blank=True)
     IsChecked = models.BooleanField(default=False)
