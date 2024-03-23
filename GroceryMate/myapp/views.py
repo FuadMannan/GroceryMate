@@ -20,10 +20,22 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return redirect('/accounts/login/')
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form, "page": "signup"})
+
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = UserProfileForm()
+    return render(request, 'user_profile.html', {'form': form})
 
 
 @csrf_exempt
