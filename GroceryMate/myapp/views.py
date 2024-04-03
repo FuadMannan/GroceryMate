@@ -1,10 +1,13 @@
 import json
 
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from myapp.forms import SignUpForm
+from django.contrib import messages
+from myapp.forms import SignUpForm, UserProfileForm
 from myapp.backend.nutrition.api import NutritionApi
 
 from .backend.scrape_api import scrape_api
@@ -24,6 +27,11 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form, "page": "signup"})
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('/accounts/login/')
 
 @csrf_exempt
 def scrape(request):
@@ -150,3 +158,17 @@ def get_nutrition_info(request, name):
     data = NutritionApi().get_nutrition(name)
 
     return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def edit_user_profile(request):
+    if request.method == 'POST':
+        current_user = User.objects.get(id=request.user.id)
+        user_form = UserProfileForm(request.POST, instance=request.user)
+        if user_form.is_valid():
+            user_form.save()
+            login(request, current_user)
+            messages.success(request, 'Your profile is updated successfully!')
+            return redirect('grocery_lists')
+    else:
+        user_form = UserProfileForm(instance=request.user)
+    return render(request, 'registration/user_profile.html', {'form': user_form})

@@ -45,7 +45,8 @@
                         <span class="d-none d-sm-inline mx-1">{{request.user.username}}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                        <li><a class="dropdown-item" href="#">Sign out</a></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
+                        <li><a class="dropdown-item" href="{% url 'edit_user_profile' %}">Edit Profile Settings</a></li>
                     </ul>
                 </div>
             </div>

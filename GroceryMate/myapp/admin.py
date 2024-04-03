@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Products, Prices, Stores, NutritionalInfo, GroceryLists, ListItems
+from .models import Products, Prices, Stores, NutritionalInfo, GroceryLists, ListItems, Profile
 
 # Register your models here.
 admin.site.register(Products)
@@ -9,3 +9,4 @@ admin.site.register(Stores)
 admin.site.register(NutritionalInfo)
 admin.site.register(GroceryLists)
 admin.site.register(ListItems)
+admin.site.register(Profile)

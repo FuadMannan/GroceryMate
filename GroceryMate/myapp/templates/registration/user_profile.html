@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Grocery Mate{% endblock %}
+{% block content %}
+{% load static %}
+
+<link href="{% static '/css/signup.css' %}" rel="stylesheet">
+
+<div class="form-container">
+    <h2>Edit User Profile</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+            <small>{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <p class="error-message">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <button class="form-button" type="submit">Save User Profile Settings!</button>
+    </form>
+</div>
+{% endblock %}
