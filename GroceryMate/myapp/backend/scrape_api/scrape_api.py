@@ -48,7 +48,7 @@ class Scraper(ABC):
 
     def open_with_driver(self, url: str = None):
         if self.driver is None:
-            self.driver = Driver(uc=True, headless=False)
+            self.driver = Driver(uc=True, headless=True)
         if url:
             self.driver.open(url)
 
