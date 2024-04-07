@@ -151,7 +151,10 @@ class Scraper(ABC):
 
 
     def get_products_prices(self):
+        scrape_start = time.time()
         self.attempt(self.get_grocery_actions())
+        scrape_end = time.time()
+        print(f'Total scrape time: {scrape_end - scrape_start}')
 
 
     def attempt(self, actions):
@@ -305,7 +308,10 @@ class Metro(Scraper):
                 items = self.soup.select('.pt__content--wrap')
                 for item in items:
                     product_name = item.select_one('.head__title').text
-                    product = self.save_product(product_name)
+                    brand_name = item.select_one('.head__brand')
+                    brand_name = brand_name.text.strip() if len(brand_name.text) > 1 else 'None'
+                    brand = self.save_brand(brand_name)
+                    product = self.save_product(product_name, brand)
                     product_price = item.select('.price-update')
                     if len(product_price) == 1:
                         product_price = product_price[0].text.strip('$')
