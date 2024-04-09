@@ -61,24 +61,21 @@ document.addEventListener("DOMContentLoaded", function () {
                         const new_item = format_list_item(productName, brandName, quantity, '', price, listItemID);
                         itemList.insertAdjacentHTML('beforeend', new_item);
 
-                        // Add event listeners to all delete buttons
-                        document.querySelectorAll('.delete-btn').forEach(button => {
-                            button.addEventListener('click', function () {
-                                const listItem = this.closest('.list-group-item');
-                                deleteItem(listItem);
-                            });
+
+                        // Add event listener for new delete button
+                        const new_elem = document.querySelector(`[data-id="${listItemID}"]`);
+                        new_elem.querySelector('.delete-btn').addEventListener('click', function () {
+                            const listItem = this.closest('.list-group-item');
+                            deleteItem(listItem);
                         });
 
-                        var popoverTriggerList = [].slice.call(document.querySelectorAll('.nutrition-info-btn'));
-                        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-                            name = popoverTriggerEl.dataset.name;
-                            return new bootstrap.Popover(popoverTriggerEl, {
-                                animation: true,
-                                title: 'Nutrition Information',
-                                content: getTable(name),
-                                trigger: 'focus',
-                                html: true,
-                            });
+                        // Add nutrition info popover for new item
+                        new bootstrap.Popover(new_elem.querySelector('.nutrition-info-btn'), {
+                            animation: true,
+                            title: 'Nutrition Information',
+                            content: getTable(productName),
+                            trigger: 'focus',
+                            html: true,
                         });
                     });
                 });
@@ -169,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <span class="text-center col">${unit}</span>
             <span class="text-center col">${price}</span>
             <div class="btn-group col" role="group">
-                <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name=${productName}>
+                <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name="${productName}">
                     Nutrition Info</i>
                 </button>
                 <button type="button" class="btn btn-outline-danger delete-btn"><i class="fas fa-trash-alt"></i>
