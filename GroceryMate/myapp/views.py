@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.db.models import Q
 from myapp.forms import SignUpForm, UserProfileForm
 from myapp.backend.nutrition.api import NutritionApi
 
@@ -103,8 +104,12 @@ def get_products(request):
 
     results = {}
 
-    products = Products.objects.filter(ProductName__icontains=data['name'])
-    # products = products.select_related('BrandID').prefetch_related('prices_set')
+    terms = [term.strip() for term in data['name'].split(',')]
+
+    query = Q()
+    for term in terms:
+        query |= Q(ProductName__icontains=term) | Q(BrandID__BrandName__icontains=term)
+    products = Products.objects.filter(query)
 
     for i, product in enumerate(products):
         item = {}
