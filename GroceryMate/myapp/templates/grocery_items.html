@@ -38,8 +38,8 @@
                     <span class="text-center col">{{item.PriceID.ProductID.BrandID.BrandName}}</span>
                     <span class="text-center col">{{item.Quantity}}</span>
                     <span class="text-center col">{{item.Unit}}</span>
-                    <span class="text-center col">${{item.PriceID.Price}}</span>
                     <div class="btn-group col" role="group">
+                    <span class="text-center col" data-type="list-item-price">${{item.PriceID.Price}}</span>
                         <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name="{{item.PriceID.ProductID.ProductName}}">Nutrition
                             Info</i>
                         </button>
@@ -49,6 +49,8 @@
                 </li>
             {% endfor %}
         </ul>
+        <h5 class="pt-4">Total</h5>
+        <span id="total-cost"></span>
     </div>
 </div>
 

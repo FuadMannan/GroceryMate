@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const itemList = document.getElementById('grocery-list-items-container');
+    updateTotal();
 
     document.getElementById('add-item-modal').addEventListener('hidden.bs.modal', (event) => {
         $('.modal-title')[0].textContent = 'Prices';
@@ -61,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const new_item = format_list_item(productName, brandName, quantity, '', price, listItemID);
                         itemList.insertAdjacentHTML('beforeend', new_item);
 
+                        updateTotal();
 
                         // Add event listener for new delete button
                         const new_elem = document.querySelector(`[data-id="${listItemID}"]`);
@@ -103,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (confirm('Are you sure you want to remove this item?')) {
             delete_item(item.dataset.id)
             itemList.removeChild(item);
+            updateTotal();
         }
     }
 
@@ -164,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <span class="text-center col">${brandName}</span>
             <span class="text-center col">${quantity}</span>
             <span class="text-center col">${unit}</span>
-            <span class="text-center col">${price}</span>
+            <span class="text-center col" data-type="list-item-price">${price}</span>
             <div class="btn-group col" role="group">
                 <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name="${productName}">
                     Nutrition Info</i>
@@ -174,6 +177,19 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         </li>`;
         return item;
+    }
+
+    function updateTotal() {
+        const price_elem = document.getElementById('total-cost');
+        const quantityIndex = [...document.querySelector('#grocery-items-div-id>span').children].findIndex(i=>i.textContent=='Quantity');
+        let prices = document.querySelectorAll('[data-type]');
+        let total = Number(0);
+        for (let i = 0; i < prices.length; i++) {
+            let price = Number(prices[i].textContent.slice(1));
+            let quantity = Number(prices[i].parentElement.children[quantityIndex].textContent);
+            total += quantity * price;
+        }
+        price_elem.textContent = `$${total.toFixed(2)}`;
     }
 
     var popoverTriggerList = [].slice.call(document.querySelectorAll('.nutrition-info-btn'));
