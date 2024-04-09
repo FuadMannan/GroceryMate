@@ -161,13 +161,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function format_list_item(productName, brandName, quantity, unit, price, listItemID) {
         let item = `<li class="list-group-item d-flex align-items-center" data-id=${listItemID}>
-            <a href="#" class="grocery-list-item-link col">
+            <a href="#" class="grocery-list-item-link col-4">
                 ${productName}
             </a>
-            <span class="text-center col">${brandName}</span>
-            <span class="text-center col">${quantity}</span>
-            <span class="text-center col">${unit}</span>
-            <span class="text-center col" data-type="list-item-price">${price}</span>
+            <span class="text-center col-2">${brandName}</span>
+            <span class="text-center col-2">${quantity}</span>
+            <span class="text-center col-2" data-type="list-item-price">${price}</span>
             <div class="btn-group col" role="group">
                 <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name="${productName}">
                     Nutrition Info</i>

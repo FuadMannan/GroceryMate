@@ -23,23 +23,23 @@
     <div class="grocery-items-div" id="grocery-items-div-id">
         <h5>Items</h5>
         <span class="container d-flex px-2">
-            <span class="col-2">Name</span>
+            <span class="col-4">Name</span>
             <span class="text-center col-2">Brand</span>
             <span class="text-center col-2">Quantity</span>
-            <span class="text-center col-2">Units</span>
+            <!-- <span class="text-center col-2">Units</span> -->
             <span class="text-center col-2">Price</span>
         </span>
         <ul class="list-group" id="grocery-list-items-container">
             {% for item in grocery_list_items %}
                 <li class="list-group-item d-flex align-items-center" data-id={{item.ItemID}}>
-                    <a href="#" class="grocery-list-item-link col">
+                    <a href="#" class="grocery-list-item-link col-4">
                         <span>{{item.PriceID.ProductID.ProductName}}</span>
                     </a>
-                    <span class="text-center col">{{item.PriceID.ProductID.BrandID.BrandName}}</span>
-                    <span class="text-center col">{{item.Quantity}}</span>
-                    <span class="text-center col">{{item.Unit}}</span>
-                    <div class="btn-group col" role="group">
-                    <span class="text-center col" data-type="list-item-price">${{item.PriceID.Price}}</span>
+                    <span class="text-center col-2">{{item.PriceID.ProductID.BrandID.BrandName}}</span>
+                    <span class="text-center col-2">{{item.Quantity}}</span>
+                    <!-- <span class="text-center col">{{item.Unit}}</span> -->
+                    <span class="text-center col-2" data-type="list-item-price">${{item.PriceID.Price}}</span>
+                    <div class="btn-group col-2" role="group">
                         <button type="button" class="btn btn-outline-primary rename-btn nutrition-info-btn" data-name="{{item.PriceID.ProductID.ProductName}}">Nutrition
                             Info</i>
                         </button>
