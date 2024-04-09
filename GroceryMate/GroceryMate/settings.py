@@ -130,7 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CELERY / REDIS configuration
 # Run in terminal with "celery -A GroceryMate.celery worker --pool=solo -l info"
 
-CELERY_BROKER_URL = 'redis://default:qmB3T8YTHQIa63297ypjyZcX5n9PeHVD@redis-12021.c267.us-east-1-4.ec2.cloud.redislabs.com:12021'
+CELERY_BROKER_URL = 'redis://default:RO9U2j7jJqdchp5prD6eAsyjCJcWOxwa@redis-12631.c325.us-east-1-4.ec2.cloud.redislabs.com:12631'
 
 CELERY_ACCEPT_CONTENT = ['json']
 
